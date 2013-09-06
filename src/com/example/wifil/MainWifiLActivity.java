@@ -4,7 +4,7 @@ import android.os.Bundle;
 import android.app.Activity;
 import android.view.Menu;
 
-public class MainWifiLActivity extends Activity {
+public class MainWiFiLActivity extends Activity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
