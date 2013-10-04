@@ -17,7 +17,7 @@ public final class R {
         public static final int menu_settings=0x7f070000;
     }
     public static final class layout {
-        public static final int activity_main_wifi_l=0x7f030000;
+        public static final int activity_main_wifil=0x7f030000;
     }
     public static final class menu {
         public static final int activity_main_wifi_l=0x7f060000;

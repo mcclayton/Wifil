@@ -4,12 +4,12 @@ import android.os.Bundle;
 import android.app.Activity;
 import android.view.Menu;
 
-public class MainWiFiLActivity extends Activity {
+public class MainWifilActivity extends Activity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main_wifi_l);
+		setContentView(R.layout.activity_main_wifil);
 	}
 
 	@Override
