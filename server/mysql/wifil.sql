@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 23, 2013 at 05:14 AM
+-- Generation Time: Oct 28, 2013 at 04:41 AM
 -- Server version: 5.6.11
 -- PHP Version: 5.5.3
 
@@ -48,15 +48,33 @@ CREATE TABLE IF NOT EXISTS `hotspotlist` (
   `lon` decimal(10,4) NOT NULL,
   `radius` int(11) NOT NULL,
   `meta` varchar(1000) NOT NULL,
-  PRIMARY KEY (`ID`)
+  `geohash` int(11) NOT NULL,
+  PRIMARY KEY (`ID`),
+  UNIQUE KEY `ID` (`ID`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=2 ;
 
 --
 -- Dumping data for table `hotspotlist`
 --
 
-INSERT INTO `hotspotlist` (`ID`, `SSID`, `MAC`, `lat`, `lon`, `radius`, `meta`) VALUES
-(1, 'King', '00:1E:2A:6E:FB:A5', '40.4251', '-86.9239', 20, 'desc:"The Best Hotspot"\r\nrat:5');
+INSERT INTO `hotspotlist` (`ID`, `SSID`, `MAC`, `lat`, `lon`, `radius`, `meta`, `geohash`) VALUES
+(1, 'King', '00:1E:2A:6E:FB:A5', '40.4251', '-86.9239', 30, 'desc:"The Best Hotspot"\r\nrat:5', 31739461);
+
+--
+-- Triggers `hotspotlist`
+--
+DROP TRIGGER IF EXISTS `set geohash`;
+DELIMITER //
+CREATE TRIGGER `set geohash` BEFORE INSERT ON `hotspotlist`
+ FOR EACH ROW SET NEW.geohash = (FLOOR((NEW.lat+180)/.05))*7200+FLOOR((NEW.lon+180)/.05)
+//
+DELIMITER ;
+DROP TRIGGER IF EXISTS `update geohash`;
+DELIMITER //
+CREATE TRIGGER `update geohash` BEFORE UPDATE ON `hotspotlist`
+ FOR EACH ROW SET NEW.geohash = (FLOOR((NEW.lat+180)/.05))*7200+FLOOR((NEW.lon+180)/.05)
+//
+DELIMITER ;
 
 -- --------------------------------------------------------
 
