@@ -92,7 +92,7 @@ public class ServerCommunication {
 	 * The input file is transported to the input url destination with the given filename and filedescrpition 
 	 * as a POST request. an exception will be thrown if any sort of interruption occurs during the post
 	 */
-	public static void serverPostText(String urlString, File file, String fileName, String fileDescription) {
+	public static void serverPostFile(String urlString, File file, String fileName, String fileDescription) {
 		
 		HttpPost postRequest = new HttpPost(urlString);
 		try {
@@ -175,7 +175,7 @@ public class ServerCommunication {
 		serverPost("deauth.php", test_variables, test_values);
 			
 		File testFile = new File ("C:/Users/Administrator/Documents/WorkPlace/ServerCommunications/cache/testfile.txt") ;
-		serverPostText("http://wifil.bkingmedia.com/api/testrequest.php", testFile, testFile.getName(), "File Upload test testfile.txt description");
+		serverPostFile("http://wifil.bkingmedia.com/api/testrequest.php", testFile, testFile.getName(), "File Upload test testfile.txt description");
 
 	}*/
 
