@@ -1,9 +1,9 @@
-ServerCommunication
+erverCommunication
 ====================
 
-This class will be the primary commincation source between the wifil android application and the wifil servers.
+This class will be the primary communication source between the wifil android application and the wifil servers.
 
-The responsabilitys include:
+The responsibilities include:
 
 1) posting files to the server
 
@@ -20,6 +20,6 @@ The name and description will need to be included for the POST request.
 
     serverPostFile(String urlString, File file, String fileName, String fileDescription) 
 
-2) serverPost will post to the given url with the given variables and values as perameters.
+2) serverPost will post to the given url with the given variables and values as perimeters.
 
     serverPost(String url, String[] variables, String[] values) 
