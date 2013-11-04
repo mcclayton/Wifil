@@ -18,8 +18,8 @@ API
 1) serverPostFile will POST to a given urlString with the given file object. 
 The name and description will need to be included for the POST request.
 
-  serverPostFile(String urlString, File file, String fileName, String fileDescription) 
+    serverPostFile(String urlString, File file, String fileName, String fileDescription) 
 
 2) serverPost will post to the given url with the given variables and values as perameters.
 
-  serverPost(String url, String[] variables, String[] values) 
+    serverPost(String url, String[] variables, String[] values) 
