@@ -31,16 +31,10 @@ public class ServerCommunication {
 	 * This process will form a dynamic post request given the file name and url
 	 * variables. The post will then be submitted
 	 */
-	public static void serverPost(String file, String[] variables, String[] values) {
+	public static void serverPost(String url, String[] variables, String[] values) {
 		
 		try {
 			
-			// The url to send the post to
-			String url = "http://wifil.bkingmedia.com/api/";
-	
-			// Append the file name to the base url destination
-			url += file;
-	
 			// The client will be the one sending the post request to the above
 			// destination
 			HttpClient client = new DefaultHttpClient();
@@ -170,9 +164,9 @@ public class ServerCommunication {
 		String[] test_values = { "val1", "val2" };
 
 		// start demonstration
-		serverPost("testrequest.php", test_variables, test_values);
-		serverPost("authenticate.php", test_variables, test_values);
-		serverPost("deauth.php", test_variables, test_values);
+		serverPost("http://wifil.bkingmedia.com/api/"testrequest.php", test_variables, test_values);
+		serverPost("http://wifil.bkingmedia.com/api/"authenticate.php", test_variables, test_values);
+		serverPost("http://wifil.bkingmedia.com/api/"deauth.php", test_variables, test_values);
 			
 		File testFile = new File ("C:/Users/Administrator/Documents/WorkPlace/ServerCommunications/cache/testfile.txt") ;
 		serverPostFile("http://wifil.bkingmedia.com/api/testrequest.php", testFile, testFile.getName(), "File Upload test testfile.txt description");
