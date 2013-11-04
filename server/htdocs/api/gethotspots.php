@@ -1,15 +1,19 @@
 <?php
-if(!(isset($_GET['lat'])&&isset($_GET['lon'])&&isset($_GET['r']))) {
+if(!(isset($_POST['lat'])&&isset($_POST['lon'])&&isset($_POST['r'])&&isset($_POST['guid'])&&isset($_POST['secret']))) {
 	echo "E:Invalid Parameters (lat,lon,r)"; //todo: do not include parameter names in release version
 	exit;
 }
 
-$maxradius = 5;
-if($_GET['r']>$maxradius) {
-	echo "E:Radius exceeds maximum allowance.";
+if($_POST['guid']!="1234" || $_POST['secret']!="5678") {
+	echo "E:Invalid GUID/Secret";
 	exit;
 }
 
+$maxradius = 10;
+if($_POST['r']>$maxradius) {
+	echo "E:Radius exceeds maximum allowance.";
+	exit;
+}
 
 $host = 'localhost';
 $user = 'WifilManager';
@@ -33,7 +37,5 @@ while($row = mysqli_fetch_array($result))  {
 echo json_encode($hslist);
 
 mysqli_close($con);
-
-//todo: inverse haversine lat/lon
 
 ?>

@@ -1,0 +1,45 @@
+<!doctype html>
+<html>
+	<head>
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+		<title>Super API Tester 8000</title>
+		<script type = "text/javascript">
+			var proplist = new PropList();
+			
+			function PropList() {
+				this["authenticate.php"] = ["guid"];
+				this["deauth.php"] = ["guid","secret"];
+				this["gethotspots.php"] = ["guid","secret","lat","lon","r"];
+				this["submitdata.php"] = ["guid","secret"];
+			}
+		</script>
+	</head>
+	<body>
+		<select id="requestType">
+			<option value="authenticate.php">authenticate.php</option>
+			<option value="deauth.php">deauth.php</option>
+			<option value="gethotspots.php">gethotspots.php</option>
+			<option value="submitdata.php">submitdata.php</option>
+		</select>
+		
+		<form id="form" method="post" enctype="multipart/form-data">>
+		</form>
+		<div id="output"></div>
+		<script type = "text/javascript">
+			updateForm();
+			function updateForm() {
+				$("#form").html(function() {
+					var formStr = "";
+					$.each(proplist[$('#requestType').val()],function(i,v) {
+						formStr+=v+": <input type=\"text\" name=\""+v+"\" id=\"form-"+v+"\"><br>";
+					});
+					if($('#requestType').val()=="submitdata.php")
+						formStr+="data: <input type=\"file\" id=\"data\" name=\"data\"><br>";
+					formStr+="<input type=\"submit\" value=\"Submit!\">";
+					return formStr;
+				}).attr("action","api/"+$("#requestType").val());
+			}
+			$("#requestType").change(updateForm);
+		</script>
+	</body>
+</html>
