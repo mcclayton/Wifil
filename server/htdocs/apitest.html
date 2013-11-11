@@ -31,10 +31,11 @@
 				$("#form").html(function() {
 					var formStr = "";
 					$.each(proplist[$('#requestType').val()],function(i,v) {
-						formStr+=v+": <input type=\"text\" name=\""+v+"\" id=\"form-"+v+"\"><br>";
+						formStr+="<label for=\"form-"+v+"\">"+v+": </label><input type=\"text\" name=\""+v+"\" id=\"form-"+v+"\"><br>";
 					});
 					if($('#requestType').val()=="submitdata.php")
-						formStr+="data: <input type=\"file\" id=\"data\" name=\"data\"><br>";
+						formStr+="<label for=\"data\">data: </label><input type=\"file\" id=\"data\" name=\"data\"><br>";
+					formStr+="<label for=\"form-debug\">debug: </label><input type=\"checkbox\" id=\"form-debug\" name=\"debug\"><br>";
 					formStr+="<input type=\"submit\" value=\"Submit!\">";
 					return formStr;
 				}).attr("action","api/"+$("#requestType").val());
