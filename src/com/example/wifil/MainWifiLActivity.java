@@ -57,6 +57,15 @@ public class MainWifilActivity extends Activity {
     	        }
             }
         });
+        
+        final Button viewMapButton = (Button) findViewById(R.id.viewMapButton);
+        viewMapButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                // Switch the activity to the map activity
+            	Intent mapIntent = new Intent(getBaseContext(), GoogleMapWifil.class);
+            	startActivity(mapIntent);
+            }
+        });
 
 	}
 	
@@ -117,7 +126,7 @@ public class MainWifilActivity extends Activity {
             for(int i = 0; i < wifiList.size(); i++)
             {
                 connections.add(wifiList.get(i).SSID);
-                sb.append((i+1)+". \t"+wifiList.get(i).SSID+" [SIGNAL: "+wifiList.get(i).level+"]\n");
+                sb.append((i+1)+". \t"+wifiList.get(i).SSID+" [SIGNAL: "+wifiList.get(i).level+"]\n[Radius: "+ Math.abs(100+wifiList.get(i).level)*3 +" ft.]\n");
             }
             statusText.setText(sb.toString());
 
