@@ -31,10 +31,16 @@ public class ServerCommunication {
 	 * This process will form a dynamic post request given the file name and url
 	 * variables. The post will then be submitted
 	 */
-	public static void serverPost(String url, String[] variables, String[] values) {
+	public static void serverPost(String file, String[] variables, String[] values) {
 		
 		try {
 			
+			// The url to send the post to
+			String url = "http://wifil.bkingmedia.com/api/";
+	
+			// Append the file name to the base url destination
+			url += file;
+	
 			// The client will be the one sending the post request to the above
 			// destination
 			HttpClient client = new DefaultHttpClient();
@@ -86,10 +92,17 @@ public class ServerCommunication {
 	 * The input file is transported to the input url destination with the given filename and filedescrpition 
 	 * as a POST request. an exception will be thrown if any sort of interruption occurs during the post
 	 */
-	public static void serverPostFile(String urlString, File file, String fileName, String fileDescription) {
+	public static void serverPostFile(String urlString, File file, String fileName, String fileDescription , String[] variables, String[] values) {
 		
 		HttpPost postRequest = new HttpPost(urlString);
 		try {
+			
+			// Add url parameters to the post request
+			List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
+			for (int i = 0; i < variables.length; i++) {
+				urlParameters.add(new BasicNameValuePair(variables[i], values[i]));
+			}
+			postRequest.setEntity(new UrlEncodedFormEntity(urlParameters));
 
 			MultipartEntity multiPartEntity = new MultipartEntity();
 
@@ -159,18 +172,31 @@ public class ServerCommunication {
 		System.out.println("\n"+responseString);
 	}
 
-	/*public static void main(String[] args) {
-		String[] test_variables = { "var1", "var2" };
-		String[] test_values = { "val1", "val2" };
+	public static void main(String[] args) {
 
-		// start demonstration
-		serverPost("http://wifil.bkingmedia.com/api/"testrequest.php", test_variables, test_values);
-		serverPost("http://wifil.bkingmedia.com/api/"authenticate.php", test_variables, test_values);
-		serverPost("http://wifil.bkingmedia.com/api/"deauth.php", test_variables, test_values);
-			
+
+		// authenticate.php :: returns a google key given a guid
+		String[] test_authenticate_variable = { "guidd" , "secret" };
+		String[] test_authenticate_value    = { "1234"  , "5678" };
+		serverPost("authenticate.php", test_authenticate_variable, test_authenticate_value);
+		
+		// deauth.php :: returns 0 if successful
+		String[] test_deauth_variable = { "guid" , "secret" };
+		String[] test_deauth_value    = { "1234" , "5678"   };
+		serverPost("deauth.php", test_deauth_variable, test_deauth_value);
+		
+		// gethotspots.php :: returns a list of hotspots within a specific radius
+		String[] test_gethotspots_variable = { "guid" , "secret" , "lat" , "lon" , "r" };
+		String[] test_gethotspots_value    = { "1234" , "5678"   , "40.42"   , "-86.92"	  , "1" };
+		serverPost("gethotspots.php", test_gethotspots_variable, test_gethotspots_value);
+				
+		// submitdata.php :: uploads the file given to a specific guide and secret, returns the number of modifications/changes
+		String[] test_submitdata_variable = { "guid" , "secret" };
+		String[] test_submitdata_value    = { "1234" , "5678" };
 		File testFile = new File ("C:/Users/Administrator/Documents/WorkPlace/ServerCommunications/cache/testfile.txt") ;
-		serverPostFile("http://wifil.bkingmedia.com/api/testrequest.php", testFile, testFile.getName(), "File Upload test testfile.txt description");
+		serverPostFile("http://wifil.bkingmedia.com/api/testrequest.php", testFile, testFile.getName(), "File Upload test testfile.txt description", test_submitdata_variable, test_submitdata_value);
 
-	}*/
+		
+	}
 
 }

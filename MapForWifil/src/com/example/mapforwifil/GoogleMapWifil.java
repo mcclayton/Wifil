@@ -29,8 +29,8 @@ public class GoogleMapWifil extends FragmentActivity implements OnMapLongClickLi
 		
 		map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
         map.setOnMapLongClickListener(this);
-    
-   //Open the map on my current location
+        
+        //Open the map on my current location
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         // Create a criteria object to retrieve provider
         Criteria criteria = new Criteria();
@@ -40,8 +40,8 @@ public class GoogleMapWifil extends FragmentActivity implements OnMapLongClickLi
         myLocation = locationManager.getLastKnownLocation(provider);
         //Get latitude and longitude
         LatLng latlng = new LatLng(myLocation.getLatitude(),myLocation.getLongitude());
-       /////////////just for now
-       if(latlng == null){
+        /////////////just for now
+        if(latlng == null){
         	latlng = new LatLng(-33, 44);
         }///////////////////////need to be removed
         //move camera to my location
@@ -52,12 +52,12 @@ public class GoogleMapWifil extends FragmentActivity implements OnMapLongClickLi
         GoogleMapOptions options = new GoogleMapOptions();
         options.mapType(GoogleMap.MAP_TYPE_SATELLITE).compassEnabled(true).rotateGesturesEnabled(true).tiltGesturesEnabled(true);
         
-
+        
     }
-
+    
 	@Override
 	public void onMapLongClick(final LatLng point) {
-//
+        //
 		map.addMarker(new MarkerOptions().position(point).draggable(true));
 		
 		
