@@ -58,31 +58,8 @@ public class GoogleMapWifil extends FragmentActivity implements OnMapLongClickLi
 	@Override
 	public void onMapLongClick(final LatLng point) {
 //
-		AlertDialog.Builder alert = new AlertDialog.Builder(this);
-
-		alert.setTitle("Wifi Info");
-		alert.setMessage("Enter the name of Wifi hotspot");
-
-		// Set an EditText view to get user input 
-		final EditText input = new EditText(this);
-		alert.setView(input);
-
-		alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-		public void onClick(DialogInterface dialog, int whichButton) {
-		 Editable value = input.getText();
-		  // Do something with value!
-		  map.addMarker(new MarkerOptions().position(point).title(value.toString()));
-		  }
-		});
-
-		alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-		  public void onClick(DialogInterface dialog, int whichButton) {
-		    // Canceled.
-		  }
-		});
-
-		alert.show();
-		//
+		map.addMarker(new MarkerOptions().position(point).draggable(true));
+		
 		
 		
 	}
