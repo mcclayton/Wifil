@@ -14,27 +14,32 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.Menu;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.TextView;
+import android.widget.ListView;
+import android.widget.Toast;
 
 public class MainWifilActivity extends Activity {
 	
-    WifiManager mainWifi;
-    WifiReceiver receiverWifi;
-
-    StringBuilder sb = new StringBuilder();
+    private WifiManager mainWifi;
+    private WifiReceiver receiverWifi;
 
     private final Handler handler = new Handler();
     
-    TextView statusText;
+	private final ArrayList<String> hotspotList = new ArrayList<String>();
+	ArrayAdapter<String> adapter = null;
 	
+	//TODO: Release broadcast receiver when activity ends.
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main_wifil);
+		setContentView(R.layout.activity_main_wifil);		
 		
-		statusText = (TextView) findViewById(R.id.textStatus);
+		final ListView listview = (ListView) findViewById(R.id.hotspotListView);
+		hotspotList.add("Empty");
+		adapter = new ArrayAdapter<String>(this, R.layout.rowlayout, R.id.label, hotspotList);
+		listview.setAdapter(adapter);
 		
 	    mainWifi = (WifiManager) getSystemService(Context.WIFI_SERVICE);
 
@@ -50,9 +55,9 @@ public class MainWifilActivity extends Activity {
     	        if(mainWifi.isWifiEnabled()==false)
     	        {
     	            //mainWifi.setWifiEnabled(true);
-    	        	statusText.setText("ERROR: WiFi is disabled!");
+    	        	Toast.makeText(getBaseContext(), "ERROR: WiFi is disabled!", Toast.LENGTH_LONG).show();
     	        } else {
-    	        	statusText.setText("HOTSPOTS:\n\nLoading...");
+    	        	Toast.makeText(getBaseContext(), "Starting Hotspot Scan...", Toast.LENGTH_LONG).show();
     	        	startScan();
     	        }
             }
@@ -116,20 +121,16 @@ public class MainWifilActivity extends Activity {
     {
         public void onReceive(Context c, Intent intent)
         {
-            ArrayList<String> connections=new ArrayList<String>();
-
-            sb = new StringBuilder();
             List<ScanResult> wifiList;
             wifiList = mainWifi.getScanResults();
-            
-            sb.append("HOTSPOTS:\n\n");
+                        
+            hotspotList.clear();
             for(int i = 0; i < wifiList.size(); i++)
             {
-                connections.add(wifiList.get(i).SSID);
-                sb.append((i+1)+". \t"+wifiList.get(i).SSID+" [SIGNAL: "+wifiList.get(i).level+"]\n[Radius: "+ Math.abs(100+wifiList.get(i).level)*3 +" ft.]\n");
+                hotspotList.add(wifiList.get(i).SSID.toString());
+                //sb.append((i+1)+". \t"+wifiList.get(i).SSID+" [SIGNAL: "+wifiList.get(i).level+"]\n[Radius: "+ Math.abs(100+wifiList.get(i).level)*3 +" ft.]\n");
             }
-            statusText.setText(sb.toString());
-
+			adapter.notifyDataSetChanged();
         }
     }
 

@@ -1,22 +1,23 @@
 package com.example.wifil;
 
+import com.google.android.gms.maps.*;
+import com.google.android.gms.maps.GoogleMap.OnMapLongClickListener;
+import com.google.android.gms.maps.model.*;
+
+import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Bundle;
+import android.app.Activity;
+import android.content.DialogInterface;
+import android.view.Menu;
+import android.widget.EditText;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.text.Editable;
-import android.widget.EditText;
-
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.GoogleMap.OnMapLongClickListener;
-import com.google.android.gms.maps.GoogleMapOptions;
-import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 public class GoogleMapWifil extends FragmentActivity implements OnMapLongClickListener {
 	GoogleMap map;
 	LocationManager locationManager;
@@ -28,8 +29,8 @@ public class GoogleMapWifil extends FragmentActivity implements OnMapLongClickLi
 		
 		map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
         map.setOnMapLongClickListener(this);
-    
-   //Open the map on my current location
+        
+        //Open the map on my current location
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         // Create a criteria object to retrieve provider
         Criteria criteria = new Criteria();
@@ -39,8 +40,8 @@ public class GoogleMapWifil extends FragmentActivity implements OnMapLongClickLi
         myLocation = locationManager.getLastKnownLocation(provider);
         //Get latitude and longitude
         LatLng latlng = new LatLng(myLocation.getLatitude(),myLocation.getLongitude());
-       /////////////just for now
-       if(latlng == null){
+        /////////////just for now
+        if(latlng == null){
         	latlng = new LatLng(-33, 44);
         }///////////////////////need to be removed
         //move camera to my location
@@ -51,13 +52,15 @@ public class GoogleMapWifil extends FragmentActivity implements OnMapLongClickLi
         GoogleMapOptions options = new GoogleMapOptions();
         options.mapType(GoogleMap.MAP_TYPE_SATELLITE).compassEnabled(true).rotateGesturesEnabled(true).tiltGesturesEnabled(true);
         
-
+        
     }
-
+    
 	@Override
 	public void onMapLongClick(final LatLng point) {
-//
-        map.addMarker(new MarkerOptions().position(point).draggable(true));
+        //
+		map.addMarker(new MarkerOptions().position(point).draggable(true));
+		
+		
 		
 	}
 }
