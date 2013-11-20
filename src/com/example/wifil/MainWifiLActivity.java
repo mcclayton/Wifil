@@ -12,11 +12,15 @@ import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainWifilActivity extends Activity {
@@ -26,8 +30,8 @@ public class MainWifilActivity extends Activity {
 
     private final Handler handler = new Handler();
     
-	private final ArrayList<String> hotspotList = new ArrayList<String>();
-	ArrayAdapter<String> adapter = null;
+	private final ArrayList<ScanResult> hotspotList = new ArrayList<ScanResult>();
+	CustomArrayAdapter adapter = null;
 	
 	//TODO: Release broadcast receiver when activity ends.
 	
@@ -37,16 +41,14 @@ public class MainWifilActivity extends Activity {
 		setContentView(R.layout.activity_main_wifil);		
 		
 		final ListView listview = (ListView) findViewById(R.id.hotspotListView);
-		hotspotList.add("Empty");
-		adapter = new ArrayAdapter<String>(this, R.layout.rowlayout, R.id.label, hotspotList);
+		
+		adapter = new CustomArrayAdapter(getBaseContext(), hotspotList);
 		listview.setAdapter(adapter);
 		
 	    mainWifi = (WifiManager) getSystemService(Context.WIFI_SERVICE);
 
 	    receiverWifi = new WifiReceiver();
-	    registerReceiver(receiverWifi, new IntentFilter(
-	    WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
-		
+	    registerReceiver(receiverWifi, new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
 		
         final Button button = (Button) findViewById(R.id.hotspotButton);
         button.setOnClickListener(new View.OnClickListener() {
@@ -121,17 +123,47 @@ public class MainWifilActivity extends Activity {
     {
         public void onReceive(Context c, Intent intent)
         {
-            List<ScanResult> wifiList;
-            wifiList = mainWifi.getScanResults();
-                        
-            hotspotList.clear();
+            List<ScanResult> wifiList = mainWifi.getScanResults();
+            hotspotList.clear();            
             for(int i = 0; i < wifiList.size(); i++)
             {
-                hotspotList.add(wifiList.get(i).SSID.toString());
-                //sb.append((i+1)+". \t"+wifiList.get(i).SSID+" [SIGNAL: "+wifiList.get(i).level+"]\n[Radius: "+ Math.abs(100+wifiList.get(i).level)*3 +" ft.]\n");
+                hotspotList.add(wifiList.get(i));
             }
 			adapter.notifyDataSetChanged();
         }
     }
+  
+    public class CustomArrayAdapter extends ArrayAdapter<ScanResult> {
+    	  private final Context context;
+    	  private final ArrayList<ScanResult> values;
 
+    	  public CustomArrayAdapter(Context context, ArrayList<ScanResult> values) {
+    	    super(context, R.layout.rowlayout, values);
+    	    this.context = context;
+    	    this.values = values;
+    	  }
+
+    	  @Override
+    	  public View getView(int position, View convertView, ViewGroup parent) {
+    	    LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+    	    View rowView = inflater.inflate(R.layout.rowlayout, parent, false);
+    	    TextView textView = (TextView) rowView.findViewById(R.id.label);
+    	    ImageView imageView = (ImageView) rowView.findViewById(R.id.icon);
+    	    textView.setText(values.get(position).SSID+" - "+values.get(position).level);
+    	    
+    	    // Change the Wi-Fi icon based on signal strength
+    	    int signal = values.get(position).level;
+    	    if (signal >= -76) {
+    	      imageView.setImageResource(R.drawable.wifi_signal_4);
+    	    } else if (signal < -76 && signal >= -87 ) {
+    	      imageView.setImageResource(R.drawable.wifi_signal_3);
+    	    } else if (signal < -87 && signal >= -98 ) {
+      	      imageView.setImageResource(R.drawable.wifi_signal_2);
+      	    } else if (signal < -98) {
+      	      imageView.setImageResource(R.drawable.wifi_signal_1);
+      	    }
+
+    	    return rowView;
+    	  }
+    	} 
 }

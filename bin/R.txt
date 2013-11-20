@@ -58,6 +58,10 @@ int drawable ic_plusone_small_off_client 0x7f02001a
 int drawable ic_plusone_standard_off_client 0x7f02001b
 int drawable ic_plusone_tall_off_client 0x7f02001c
 int drawable wifi_icon 0x7f02001d
+int drawable wifi_signal_1 0x7f02001e
+int drawable wifi_signal_2 0x7f02001f
+int drawable wifi_signal_3 0x7f020020
+int drawable wifi_signal_4 0x7f020021
 int id action_settings 0x7f05000c
 int id hotspotButton 0x7f050006
 int id hotspotListView 0x7f050008
