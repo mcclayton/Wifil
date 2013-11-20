@@ -68,7 +68,7 @@ $lonMax = $_POST['lon'] + $lonRange;
 if(isset($_POST['debug']))
 	echo "Lat: $latUnit ($latMin - $latMax)<br>Lon: $lonUnit ($lonMin - $lonMax)<br>";
 
-$result = mysqli_query($con,"SELECT * FROM hotspotlist WHERE lat BETWEEN $latMin AND $latMax AND lon BETWEEN $lonMin and $lonMax"); //todo: add WHERE clause to check lat/lon/radius
+$result = mysqli_query($con,"SELECT SSID,MAC,lat,lon,radius,meta FROM hotspotlist WHERE lat BETWEEN $latMin AND $latMax AND lon BETWEEN $lonMin and $lonMax"); //todo: add WHERE clause to check lat/lon/radius
 
 $hslist = array();
 while($row = mysqli_fetch_array($result))  {

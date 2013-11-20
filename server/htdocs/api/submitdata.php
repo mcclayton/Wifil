@@ -69,7 +69,20 @@ function addHotspot($con,$ent) {
 function updateHotspot($con,$ent) {
 	if(isset($_POST['debug']))
 		echo "Updating hotspot<br>";
-	$query = "UPDATE hotspotlist SET lat=".$ent->lat.",lon=".$ent->lon." WHERE MAC=\"".$ent->MAC."\"";
+	$query = "SELECT lat,lon,count FROM hotspotlist WHERE MAC=\"".$ent->MAC."\"";
+	if(isset($_POST['debug'])) {
+		echo $query."<br>";
+	}
+	$row = mysqli_fetch_array(mysqli_query($con,$query));
+	
+	$oldLat = floatval($row['lat']);
+	$oldLon = floatval($row['lon']);
+	$count = $row['count'];
+	
+	$newLat = ($count*$oldLat + floatval($ent->lat))/($count+1);
+	$newLon = ($count*$oldLon + floatval($ent->lon))/($count+1);
+	
+	$query = "UPDATE hotspotlist SET lat=".$newLat.",lon=".$newLon.",count = count + 1 WHERE MAC=\"".$ent->MAC."\"";
 	if(isset($_POST['debug'])) {
 		echo $query."<br>";
 	}
