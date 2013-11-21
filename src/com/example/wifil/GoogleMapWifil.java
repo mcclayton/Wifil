@@ -1,24 +1,19 @@
 package com.example.wifil;
 
-import com.google.android.gms.maps.*;
-import com.google.android.gms.maps.GoogleMap.OnMapLongClickListener;
-import com.google.android.gms.maps.model.*;
-
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.os.Bundle;
-import android.app.Activity;
-import android.content.DialogInterface;
-import android.view.Menu;
-import android.widget.EditText;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.text.Editable;
-public class GoogleMapWifil extends FragmentActivity implements OnMapLongClickListener {
+
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMap.OnMapLongClickListener;
+import com.google.android.gms.maps.GoogleMapOptions;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+public class GoogleMapWifil extends Activity implements OnMapLongClickListener {
 	GoogleMap map;
 	LocationManager locationManager;
 	Location myLocation;
