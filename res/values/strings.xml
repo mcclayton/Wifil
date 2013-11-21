@@ -4,8 +4,8 @@
     <string name="app_name">Wifil</string>
     <string name="action_settings">Settings</string>
     <string name="menu_settings">Settings</string>
-    <string name="wifi_button_text">Show/Refresh Hotspots</string>
+    <string name="wifi_button_text">Refresh Hotspots</string>
     <string name="hotspot_title">HOTSPOTS:</string>
-    <string name="view_map_button_text">View Map</string>
+    <string name="view_map_button_text">Return to Map</string>
 
 </resources>

@@ -209,16 +209,17 @@ containing a value of this type.
         public static final int wifi_signal_4=0x7f020021;
     }
     public static final class id {
-        public static final int action_settings=0x7f05000c;
+        public static final int action_settings=0x7f05000d;
         public static final int hotspotButton=0x7f050006;
         public static final int hotspotListView=0x7f050008;
         public static final int hybrid=0x7f050004;
-        public static final int icon=0x7f050009;
-        public static final int label=0x7f05000a;
+        public static final int icon=0x7f05000a;
+        public static final int label=0x7f05000b;
         public static final int map=0x7f050005;
-        public static final int menu_settings=0x7f05000b;
+        public static final int menu_settings=0x7f05000c;
         public static final int none=0x7f050000;
         public static final int normal=0x7f050001;
+        public static final int progressBar2=0x7f050009;
         public static final int satellite=0x7f050002;
         public static final int terrain=0x7f050003;
         public static final int viewMapButton=0x7f050007;

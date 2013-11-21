@@ -20,6 +20,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,6 +33,7 @@ public class MainWifilActivity extends Activity {
     
 	private final ArrayList<ScanResult> hotspotList = new ArrayList<ScanResult>();
 	CustomArrayAdapter adapter = null;
+	ProgressBar progBar = null;
 	
 	//TODO: Release broadcast receiver when activity ends.
 	
@@ -41,6 +43,8 @@ public class MainWifilActivity extends Activity {
 		setContentView(R.layout.activity_main_wifil);		
 		
 		final ListView listview = (ListView) findViewById(R.id.hotspotListView);
+	    progBar = (ProgressBar) findViewById(R.id.progressBar2);
+		progBar.setVisibility(ProgressBar.INVISIBLE);
 		
 		adapter = new CustomArrayAdapter(getBaseContext(), hotspotList);
 		listview.setAdapter(adapter);
@@ -59,8 +63,8 @@ public class MainWifilActivity extends Activity {
     	            //mainWifi.setWifiEnabled(true);
     	        	Toast.makeText(getBaseContext(), "ERROR: WiFi is disabled!", Toast.LENGTH_LONG).show();
     	        } else {
-    	        	Toast.makeText(getBaseContext(), "Starting Hotspot Scan...", Toast.LENGTH_LONG).show();
     	        	startScan();
+    	        	progBar.setVisibility(ProgressBar.VISIBLE);
     	        }
             }
         });
@@ -149,7 +153,7 @@ public class MainWifilActivity extends Activity {
     	    View rowView = inflater.inflate(R.layout.rowlayout, parent, false);
     	    TextView textView = (TextView) rowView.findViewById(R.id.label);
     	    ImageView imageView = (ImageView) rowView.findViewById(R.id.icon);
-    	    textView.setText(values.get(position).SSID+" - "+values.get(position).level);
+    	    textView.setText(values.get(position).SSID+" ["+values.get(position).BSSID+"]");
     	    
     	    // Change the Wi-Fi icon based on signal strength
     	    int signal = values.get(position).level;
@@ -162,7 +166,7 @@ public class MainWifilActivity extends Activity {
       	    } else if (signal < -98) {
       	      imageView.setImageResource(R.drawable.wifi_signal_1);
       	    }
-
+    	    progBar.setVisibility(ProgressBar.INVISIBLE);
     	    return rowView;
     	  }
     	} 
