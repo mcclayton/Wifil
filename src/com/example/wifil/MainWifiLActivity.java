@@ -77,7 +77,16 @@ public class MainWifilActivity extends Activity {
             	startActivity(mapIntent);
             }
         });
-
+        
+        // Scan for hotspots if the WiFi is enabled
+        if(mainWifi.isWifiEnabled()==false)
+        {
+            //mainWifi.setWifiEnabled(true);
+        	Toast.makeText(getBaseContext(), "ERROR: WiFi is disabled!", Toast.LENGTH_LONG).show();
+        } else {
+        	startScan();
+        	progBar.setVisibility(ProgressBar.VISIBLE);
+        }
 	}
 	
 	@Override

@@ -7,5 +7,6 @@
     <string name="wifi_button_text">Refresh Hotspots</string>
     <string name="hotspot_title">HOTSPOTS:</string>
     <string name="view_map_button_text">Return to Map</string>
-
+    <string name="start_button_text">Start Wifil</string>
+    
 </resources>
