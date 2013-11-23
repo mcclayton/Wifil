@@ -1,7 +1,7 @@
 package com.example.wifil;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -127,12 +127,24 @@ public class MainWifilActivity extends Activity {
     {
         public void onReceive(Context c, Intent intent)
         {
-            List<ScanResult> wifiList = mainWifi.getScanResults();
-            hotspotList.clear();            
-            for(int i = 0; i < wifiList.size(); i++)
+        	HashMap<String, ScanResult> scansHashMap = new HashMap<String, ScanResult>();
+
+        	for(ScanResult sr: mainWifi.getScanResults())
             {
-                hotspotList.add(wifiList.get(i));
+        		// Don't store hotspots with duplicate SSIDS. Only store the one with a higher signal strength.
+            	if(!scansHashMap.containsKey(sr.SSID)) {
+            		scansHashMap.put(sr.SSID, sr);
+            	} else if (sr.level < scansHashMap.get(sr.SSID).level) {
+            		scansHashMap.remove(sr.SSID);
+            		scansHashMap.put(sr.SSID, sr);
+            	}
             }
+            
+            hotspotList.clear();                        
+            for(ScanResult sr : scansHashMap.values()) {
+                hotspotList.add(sr);
+            }
+            
 			adapter.notifyDataSetChanged();
         }
     }
@@ -153,7 +165,7 @@ public class MainWifilActivity extends Activity {
     	    View rowView = inflater.inflate(R.layout.rowlayout, parent, false);
     	    TextView textView = (TextView) rowView.findViewById(R.id.label);
     	    ImageView imageView = (ImageView) rowView.findViewById(R.id.icon);
-    	    textView.setText(values.get(position).SSID+" ["+values.get(position).BSSID+"]");
+    	    textView.setText(values.get(position).SSID);
     	    
     	    // Change the Wi-Fi icon based on signal strength
     	    int signal = values.get(position).level;
