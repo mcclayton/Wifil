@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.wifi.ScanResult;
@@ -16,6 +18,8 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -35,12 +39,15 @@ public class MainWifilActivity extends Activity {
 	CustomArrayAdapter adapter = null;
 	ProgressBar progBar = null;
 	
-	//TODO: Release broadcast receiver when activity ends.
+    private AlertDialog.Builder builder = null;
+    private DialogInterface.OnClickListener dialogClickListener = null;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main_wifil);		
+		
+	    builder = new AlertDialog.Builder(this);
 		
 		final ListView listview = (ListView) findViewById(R.id.hotspotListView);
 	    progBar = (ProgressBar) findViewById(R.id.progressBar2);
@@ -77,6 +84,24 @@ public class MainWifilActivity extends Activity {
             	startActivity(mapIntent);
             }
         });
+        
+		dialogClickListener = new DialogInterface.OnClickListener() {
+		    @Override
+		    public void onClick(DialogInterface dialog, int which) {
+		        switch (which){
+		        case DialogInterface.BUTTON_POSITIVE:
+				    Toast.makeText(getApplicationContext(), "TODO: Switch activity to maps and place pin.", Toast.LENGTH_LONG).show();
+		            break;
+		        }
+		    }
+		};
+        
+		listview.setOnItemClickListener(new OnItemClickListener() {
+			  @Override
+			  public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				builder.setMessage("Are you sure you want to place a pin for:\n"+((ScanResult)parent.getItemAtPosition(position)).SSID).setPositiveButton("Yes", dialogClickListener).setNegativeButton("No", dialogClickListener).show();
+			  }
+		}); 
         
         // Scan for hotspots if the WiFi is enabled
         if(mainWifi.isWifiEnabled()==false)
