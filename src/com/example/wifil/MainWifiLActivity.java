@@ -39,6 +39,8 @@ public class MainWifilActivity extends Activity {
 	CustomArrayAdapter adapter = null;
 	ProgressBar progBar = null;
 	
+	ScanResult selectedHotspot = null;
+	
     private AlertDialog.Builder builder = null;
     private DialogInterface.OnClickListener dialogClickListener = null;
 	
@@ -68,7 +70,7 @@ public class MainWifilActivity extends Activity {
     	        if(mainWifi.isWifiEnabled()==false)
     	        {
     	            //mainWifi.setWifiEnabled(true);
-    	        	Toast.makeText(getBaseContext(), "ERROR: WiFi is disabled!", Toast.LENGTH_LONG).show();
+    	        	Toast.makeText(getBaseContext(), "ERROR: Wi-Fi is disabled! Please enable.", Toast.LENGTH_LONG).show();
     	        } else {
     	        	startScan();
     	        	progBar.setVisibility(ProgressBar.VISIBLE);
@@ -90,7 +92,10 @@ public class MainWifilActivity extends Activity {
 		    public void onClick(DialogInterface dialog, int which) {
 		        switch (which){
 		        case DialogInterface.BUTTON_POSITIVE:
-				    Toast.makeText(getApplicationContext(), "TODO: Switch activity to maps and place pin.", Toast.LENGTH_LONG).show();
+	            	Intent mapIntent = new Intent(getBaseContext(), GoogleMapWifil.class);
+	            	mapIntent.putExtra("SSID", selectedHotspot.SSID);
+	            	mapIntent.putExtra("BSSID", selectedHotspot.BSSID);
+	            	startActivity(mapIntent);
 		            break;
 		        }
 		    }
@@ -99,7 +104,8 @@ public class MainWifilActivity extends Activity {
 		listview.setOnItemClickListener(new OnItemClickListener() {
 			  @Override
 			  public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				builder.setMessage("Are you sure you want to place a pin for:\n"+((ScanResult)parent.getItemAtPosition(position)).SSID).setPositiveButton("Yes", dialogClickListener).setNegativeButton("No", dialogClickListener).show();
+				  selectedHotspot = ((ScanResult)parent.getItemAtPosition(position));
+				  builder.setMessage("Are you sure you want to place a pin for:\n"+((ScanResult)parent.getItemAtPosition(position)).SSID).setPositiveButton("Yes", dialogClickListener).setNegativeButton("No", dialogClickListener).show();
 			  }
 		}); 
         

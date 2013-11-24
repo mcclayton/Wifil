@@ -5,6 +5,7 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -34,11 +35,7 @@ public class GoogleMapWifil extends Activity implements OnMapLongClickListener {
         // Get Current Location
         myLocation = locationManager.getLastKnownLocation(provider);
         //Get latitude and longitude
-        LatLng latlng = new LatLng(myLocation.getLatitude(),myLocation.getLongitude());
-        /////////////just for now
-        if(latlng == null){
-        	latlng = new LatLng(-33, 44);
-        }///////////////////////need to be removed
+        LatLng latlng = new LatLng(myLocation.getLatitude(), myLocation.getLongitude());
         //move camera to my location
         map.setMyLocationEnabled(true);
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(latlng, 13));
@@ -46,16 +43,20 @@ public class GoogleMapWifil extends Activity implements OnMapLongClickListener {
         //Enable compass, rotate gestures and tilt gestures
         GoogleMapOptions options = new GoogleMapOptions();
         options.mapType(GoogleMap.MAP_TYPE_SATELLITE).compassEnabled(true).rotateGesturesEnabled(true).tiltGesturesEnabled(true);
-        
-        
+     
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            String ssid = extras.getString("SSID");
+            String bssid = extras.getString("BSSID");
+            
+    		// Place a marker at the current location with the selected Wi-Fi information in the info window
+            map.addMarker(new MarkerOptions().position(new LatLng(myLocation.getLatitude(), myLocation.getLongitude())).draggable(false).title(ssid).snippet("["+bssid+"]"));
+            Toast.makeText(getBaseContext(), "Wi-Fi hotspot: "+ssid+"\nhas been pinned.", Toast.LENGTH_LONG).show();
+        }
     }
     
 	@Override
 	public void onMapLongClick(final LatLng point) {
-        //
-		map.addMarker(new MarkerOptions().position(point).draggable(true));
-		
-		
-		
+		map.addMarker(new MarkerOptions().position(point).draggable(true));		
 	}
 }
