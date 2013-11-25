@@ -1,0 +1,76 @@
+@import url(http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,700italic,400,300,600);
+
+body {
+	background:#F59B00;
+	margin:0;
+	font-family: 'Open Sans', sans-serif;
+	font-size:14px;
+}
+
+#wrapper {
+	position:relative;
+	width:750px;
+	height:auto;
+	margin:0 auto;
+	background:#fff;
+	box-shadow:0 0 5px 2px #4D3000;
+}
+
+#header {
+	display:block;
+	background:#aaa;
+	color:#fff;
+	text-align:left;
+	font-size:20px;
+	height:45px;
+	width:100%;
+	position:relative;
+	overflow:show;
+	margin-bottom:45px;
+}
+
+#logo {
+	height:80px;
+	position:relative;
+	padding:10px 15px;
+}
+
+#content {
+	left:0;
+	right:0;
+	width:auto;
+	padding:0 20px 20px;
+}
+
+#description {
+	border-bottom: 1px solid #ccc;
+	margin-bottom: 20px;
+	padding:0 15px 15px;
+}
+
+h1 {
+	font-size:1.4em;
+	font-weight:600;
+	border-bottom:1px solid #ccc;
+}
+
+#map-canvas {
+	position:relative;
+	margin:0 auto;
+	width:500px;
+	height:300px;
+	border: 1px solid #ccc;
+}
+
+#map-hotspot-title {
+	font-weight:bold;
+	font-size:1.2em;
+}
+
+#footer {
+	padding:6px 0;
+	text-align:center;
+	color:#A66900;
+	font-size:.9em;
+	font-weight:300;
+}
