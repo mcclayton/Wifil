@@ -22,8 +22,8 @@ Test with guid = 1234
 
 2) death will call to the server for de-authorization of specific a guid given the secret string.
 Test with guid = 1234 , secret = 5678
+
 	boolean deauth( String guid , String secret )
-	
 	
 3) getHotspots will return an array of hotspots given the specific latitude, longitude, and radios. an authentication is required with guid and secret.
 Test with guid = 1234 , secret = 5678, lat = 40.42 , lon = -86.92 , r = 1
@@ -34,7 +34,8 @@ CURRENTLY ONLY RETURN JSON FILE STRING
 4) submitData will take a given json file and post it to the server. This requires a guid and secret
 Test with 1234, 5678, and any json file
 CURRENTLY ONLY RETUNS NULL AND WILL NOT SUBMIT ANYTHING TO THE SERVERS
-	public static boolean submitData( String guid , String secret, File filedata )
+	
+	boolean submitData( String guid , String secret, File filedata )
 	
 
 5) serverPostFile will POST to a given urlString with the given file object. 
