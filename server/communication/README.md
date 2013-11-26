@@ -1,4 +1,4 @@
-erverCommunication
+serverCommunication
 ====================
 
 This class will be the primary communication source between the wifil android application and the wifil servers.
