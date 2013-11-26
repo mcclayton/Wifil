@@ -51,7 +51,7 @@ public class GoogleMapWifil extends Activity implements OnMapLongClickListener {
             
     		// Place a marker at the current location with the selected Wi-Fi information in the info window
             map.addMarker(new MarkerOptions().position(new LatLng(myLocation.getLatitude(), myLocation.getLongitude())).draggable(false).title(ssid).snippet("["+bssid+"]"));
-            Toast.makeText(getBaseContext(), "Wi-Fi hotspot: "+ssid+"\nhas been pinned.", Toast.LENGTH_LONG).show();
+            Toast.makeText(getBaseContext(), "Wi-Fi hotspot: "+ssid+" has been pinned.", Toast.LENGTH_LONG).show();
         }
     }
     

@@ -3,24 +3,27 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#ffffff"
-    tools:context=".HomePageActivity" >
+    tools:context=".SplashPageActivity" >
 
     <ImageView
         android:id="@+id/logoImageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_above="@+id/loadingLabel"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="40dp"
-        android:layout_marginBottom="40dp"
         android:src="@drawable/logo" />
 
-    <Button
-        android:id="@+id/startButton"
-        android:layout_width="fill_parent"
+    <TextView
+        android:id="@+id/loadingLabel"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:text="@string/start_button_text" />
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        android:textSize="25sp"
+        android:text="@string/loading_text" />
 
 </RelativeLayout>

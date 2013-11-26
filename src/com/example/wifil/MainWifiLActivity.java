@@ -60,8 +60,8 @@ public class MainWifilActivity extends Activity {
 		
 	    mainWifi = (WifiManager) getSystemService(Context.WIFI_SERVICE);
 
-	    receiverWifi = new WifiReceiver();
-	    registerReceiver(receiverWifi, new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
+	    //receiverWifi = new WifiReceiver();
+	    //registerReceiver(receiverWifi, new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
 		
         final Button button = (Button) findViewById(R.id.hotspotButton);
         button.setOnClickListener(new View.OnClickListener() {
@@ -213,9 +213,9 @@ public class MainWifilActivity extends Activity {
     	      imageView.setImageResource(R.drawable.wifi_signal_4);
     	    } else if (signal < -76 && signal >= -87 ) {
     	      imageView.setImageResource(R.drawable.wifi_signal_3);
-    	    } else if (signal < -87 && signal >= -98 ) {
+    	    } else if (signal < -87 && signal >= -95 ) {
       	      imageView.setImageResource(R.drawable.wifi_signal_2);
-      	    } else if (signal < -98) {
+      	    } else if (signal < -95) {
       	      imageView.setImageResource(R.drawable.wifi_signal_1);
       	    }
     	    progBar.setVisibility(ProgressBar.INVISIBLE);
