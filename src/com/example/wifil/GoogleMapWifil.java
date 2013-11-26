@@ -9,10 +9,12 @@ import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMapLongClickListener;
 import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 public class GoogleMapWifil extends Activity implements OnMapLongClickListener {
 	GoogleMap map;
@@ -26,6 +28,8 @@ public class GoogleMapWifil extends Activity implements OnMapLongClickListener {
 		map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
         map.setOnMapLongClickListener(this);
         
+        map.setMyLocationEnabled(true);
+        
         //Open the map on my current location
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         // Create a criteria object to retrieve provider
@@ -37,7 +41,6 @@ public class GoogleMapWifil extends Activity implements OnMapLongClickListener {
         //Get latitude and longitude
         LatLng latlng = new LatLng(myLocation.getLatitude(), myLocation.getLongitude());
         //move camera to my location
-        map.setMyLocationEnabled(true);
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(latlng, 13));
         
         //Enable compass, rotate gestures and tilt gestures
@@ -49,14 +52,25 @@ public class GoogleMapWifil extends Activity implements OnMapLongClickListener {
             String ssid = extras.getString("SSID");
             String bssid = extras.getString("BSSID");
             
+            provider = locationManager.getBestProvider(criteria, true);
+            myLocation = locationManager.getLastKnownLocation(provider);
+            
     		// Place a marker at the current location with the selected Wi-Fi information in the info window
-            map.addMarker(new MarkerOptions().position(new LatLng(myLocation.getLatitude(), myLocation.getLongitude())).draggable(false).title(ssid).snippet("["+bssid+"]"));
+            map.addMarker(new MarkerOptions().position(new LatLng(myLocation.getLatitude(), myLocation.getLongitude())).draggable(true).title(ssid).snippet("["+bssid+"]"));
             Toast.makeText(getBaseContext(), "Wi-Fi hotspot: "+ssid+" has been pinned.", Toast.LENGTH_LONG).show();
         }
+        //Uncomment if I want to delete a marker on info window click
+        /*
+        map.setOnInfoWindowClickListener(new OnInfoWindowClickListener() {
+            public void onInfoWindowClick(Marker marker) {
+                marker.remove();
+            }
+        });
+        */
     }
     
 	@Override
 	public void onMapLongClick(final LatLng point) {
-		map.addMarker(new MarkerOptions().position(point).draggable(true));		
+		map.addMarker(new MarkerOptions().position(point).draggable(true));	
 	}
 }
