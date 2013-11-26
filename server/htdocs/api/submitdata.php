@@ -1,5 +1,5 @@
 <?php
-if(!(isset($_POST['guid'])&&isset($_POST['secret'])&&isset($_FILES['data']))) {
+if(!(isset($_POST['guid'])&&isset($_POST['secret'])&&isset($_POST['data']))) {
 	echo "E:Invalid Parameters";
 	exit;
 }
@@ -9,8 +9,7 @@ if($_POST['guid']!="1234" || $_POST['secret']!="5678") {
 	exit;
 }
 
-$dataStr = file_get_contents($_FILES['data']['tmp_name']);
-$data = json_decode($dataStr);
+$data = json_decode($_POST['data']);
 
 
 $host = 'localhost';

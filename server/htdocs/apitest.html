@@ -10,7 +10,7 @@
 				this["authenticate.php"] = ["guid"];
 				this["deauth.php"] = ["guid","secret"];
 				this["gethotspots.php"] = ["guid","secret","lat","lon","r"];
-				this["submitdata.php"] = ["guid","secret"];
+				this["submitdata.php"] = ["guid","secret","data"];
 			}
 		</script>
 	</head>
@@ -33,8 +33,6 @@
 					$.each(proplist[$('#requestType').val()],function(i,v) {
 						formStr+="<label for=\"form-"+v+"\">"+v+": </label><input type=\"text\" name=\""+v+"\" id=\"form-"+v+"\"><br>";
 					});
-					if($('#requestType').val()=="submitdata.php")
-						formStr+="<label for=\"data\">data: </label><input type=\"file\" id=\"data\" name=\"data\"><br>";
 					formStr+="<label for=\"form-debug\">debug: </label><input type=\"checkbox\" id=\"form-debug\" name=\"debug\"><br>";
 					formStr+="<input type=\"submit\" value=\"Submit!\">";
 					return formStr;
