@@ -9,13 +9,12 @@ import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
 import com.google.android.gms.maps.GoogleMap.OnMapLongClickListener;
 import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+
 public class GoogleMapWifil extends Activity implements OnMapLongClickListener {
 	GoogleMap map;
 	LocationManager locationManager;
@@ -34,6 +33,8 @@ public class GoogleMapWifil extends Activity implements OnMapLongClickListener {
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         // Create a criteria object to retrieve provider
         Criteria criteria = new Criteria();
+        // Make sure the current location is found with a high degree of accuracy
+        criteria.setAccuracy(Criteria.ACCURACY_FINE);
         // Get the name of the best provider
         String provider = locationManager.getBestProvider(criteria, true);
         // Get Current Location
