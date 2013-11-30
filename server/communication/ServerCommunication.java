@@ -24,14 +24,14 @@ import org.apache.http.entity.mime.content.StringBody;
 
 @SuppressWarnings({ "resource", "deprecation" })
 public class ServerCommunication {
-
+	
 	/*
 	 * Input: file name on the server side
 	 * 
 	 * This process will form a dynamic post request given the file name and url
 	 * variables. The post will then be submitted
 	 */
-	public static void serverPost(String file, String[] variables, String[] values) {
+	public static String serverPost(String urlFile, String[] variables, String[] values) {
 		
 		try {
 			
@@ -39,10 +39,9 @@ public class ServerCommunication {
 			String url = "http://wifil.bkingmedia.com/api/";
 	
 			// Append the file name to the base url destination
-			url += file;
+			url += urlFile;
 	
-			// The client will be the one sending the post request to the above
-			// destination
+			// The client will be the one sending the post request to the above destination
 			HttpClient client = new DefaultHttpClient();
 			HttpPost post = new HttpPost(url);
 	
@@ -58,13 +57,11 @@ public class ServerCommunication {
 	
 			// Print information about the post and its status
 			HttpResponse response = client.execute(post);
-			System.out.println("\nSending 'POST' request to URL : " + url);
-			System.out.println("Post parameters : " + post.getEntity());
-			System.out.println("Response Code : "
-					+ response.getStatusLine().getStatusCode());
+			//System.out.println("\nSending 'POST' request to URL : " + url);
+			//System.out.println("Post parameters : " + post.getEntity());
+			//System.out.println("Response Code : " + response.getStatusLine().getStatusCode());
 	
-			BufferedReader rd = new BufferedReader(new InputStreamReader(response
-					.getEntity().getContent()));
+			BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
 	
 			StringBuffer result = new StringBuffer();
 			String line = "";
@@ -73,17 +70,22 @@ public class ServerCommunication {
 			}
 			rd.close();
 	
-			System.out.println(result.toString());
+			//System.out.println(result.toString());
+			return result.toString();
 			
 		}catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
+			return null;
 		} catch (ClientProtocolException e) {
 			e.printStackTrace();
+			return null;
 		} catch (IllegalStateException e) {
 			e.printStackTrace();
+			return null;
 		} catch (IOException e) {
 			e.printStackTrace();
-		} 
+			return null;
+		}
 	}
 
 	/*
@@ -92,32 +94,29 @@ public class ServerCommunication {
 	 * The input file is transported to the input url destination with the given filename and filedescrpition 
 	 * as a POST request. an exception will be thrown if any sort of interruption occurs during the post
 	 */
-	public static void serverPostFile(String urlString, File file, String fileName, String fileDescription , String[] variables, String[] values) {
+	public static void serverPost(String urlFile, File file, String[] variables, String[] values) {
 		
-		HttpPost postRequest = new HttpPost(urlString);
+		String url = "http://wifil.bkingmedia.com/api/";
+
+		url += urlFile;
+		
+		HttpPost postRequest = new HttpPost(url);
 		try {
 			
-			// Add url parameters to the post request
+			/*// Add url parameters to the post request
 			List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
 			for (int i = 0; i < variables.length; i++) {
 				urlParameters.add(new BasicNameValuePair(variables[i], values[i]));
 			}
-			postRequest.setEntity(new UrlEncodedFormEntity(urlParameters));
+			postRequest.setEntity(new UrlEncodedFormEntity(urlParameters));*/
 
 			MultipartEntity multiPartEntity = new MultipartEntity();
 
-			// The usual form parameters can be added this way
-			multiPartEntity.addPart("fileDescription", new StringBody(fileDescription != null ? fileDescription : ""));
-			multiPartEntity.addPart("fileName", new StringBody(fileName != null ? fileName : file.getName()));
-
-			/*
-			 * Need to construct a FileBody with the file that needs to be
-			 * attached and specify the type of the file. Add the fileBody
-			 * to the request as an another part. This part will be considered
-			 * as file part and the rest of them as usual form-data parts
-			 */
+			//test url request body
+			multiPartEntity.addPart(variables[0], new StringBody(values[0]));
+			multiPartEntity.addPart(variables[1], new StringBody(values[1]));
 			FileBody fileBody = new FileBody(file, "application/octect-stream");
-			multiPartEntity.addPart("attachment", fileBody);
+			multiPartEntity.addPart("data", fileBody);
 
 			postRequest.setEntity(multiPartEntity);
 		} catch (UnsupportedEncodingException ex) {
@@ -172,31 +171,99 @@ public class ServerCommunication {
 		System.out.println("\n"+responseString);
 	}
 
-	public static void main(String[] args) {
-
-
-		// authenticate.php :: returns a google key given a guid
-		String[] test_authenticate_variable = { "guidd" , "secret" };
-		String[] test_authenticate_value    = { "1234"  , "5678" };
-		serverPost("authenticate.php", test_authenticate_variable, test_authenticate_value);
+	public static boolean authenticate( String guid ) {
 		
-		// deauth.php :: returns 0 if successful
-		String[] test_deauth_variable = { "guid" , "secret" };
-		String[] test_deauth_value    = { "1234" , "5678"   };
-		serverPost("deauth.php", test_deauth_variable, test_deauth_value);
+		// Build the input parameters for the post
+		String[] authenticate_variable = { "guid" };
+		String[] authenticate_value    = { guid };
 		
-		// gethotspots.php :: returns a list of hotspots within a specific radius
-		String[] test_gethotspots_variable = { "guid" , "secret" , "lat" , "lon" , "r" };
-		String[] test_gethotspots_value    = { "1234" , "5678"   , "40.42"   , "-86.92"	  , "1" };
-		serverPost("gethotspots.php", test_gethotspots_variable, test_gethotspots_value);
-				
-		// submitdata.php :: uploads the file given to a specific guide and secret, returns the number of modifications/changes
-		String[] test_submitdata_variable = { "guid" , "secret" };
-		String[] test_submitdata_value    = { "1234" , "5678" };
-		File testFile = new File ("C:/Users/Administrator/Documents/WorkPlace/ServerCommunications/cache/testfile.txt") ;
-		serverPostFile("http://wifil.bkingmedia.com/api/testrequest.php", testFile, testFile.getName(), "File Upload test testfile.txt description", test_submitdata_variable, test_submitdata_value);
-
+		// Call post method
+		String response = serverPost("authenticate.php", authenticate_variable, authenticate_value);
+		
+		// If post method succeeded and the authentication value is good, return true 
+		// Needs to be changed once server side authentication is working
+		if (response.equals("5678"))
+			return true;
+		else
+			return false;
 		
 	}
 
+	public static boolean deauth( String guid , String secret ) {
+		
+		// Build the input parameters for the post
+		String[] deauth_variable = { "guid" , "secret" };
+		String[] deauth_value    = {  guid   , secret  };
+		
+		// Call post method
+		String response = serverPost("deauth.php", deauth_variable, deauth_value);
+		
+		// If post method succeeded and the authentication value is good, return true 
+		if (response.equals("1"))
+			return true;
+		else 
+			return false;
+				
+	}
+
+	public static String /*Hotspot[]*/ getHotspots( String guid , String secret, String lat, String lon, String r ) {
+		
+		// Build the input parameters for the post
+		String[] gethotspots_variable = { "guid" , "secret" , "lat" , "lon" , "r" };
+		String[] gethotspots_value    = {  guid  ,  secret  ,  lat   , lon	 ,  r  };
+		
+		// Call post method
+		String response = serverPost("gethotspots.php", gethotspots_variable, gethotspots_value);
+		
+		// Parse json file
+		
+		//
+		
+		
+		// If post method succeeded and the authentication value is good, return true 
+		return response;
+				
+	}
+
+	public static boolean submitData( String guid , String secret, File filedata ) {
+		
+		//convert json file to string
+		
+		// Build the input parameters for the post
+		//String[] submitdate_variable = { "guid" , "secret" , "data" };
+		//String[] submitdate_value    = {  guid  ,  secret  ,  data  };
+		
+		// Call post method
+		//String response = serverPost("submitdata.php", submitdate_variable, submitdate_value);		
+		
+		// If post method succeeded and the authentication value is good, return true 
+		return false;
+				
+	}
+	
+	
+	public static void main(String[] args) {
+		
+        // Test Cases
+		
+		// Boolean authenticate( String guid )
+		if (authenticate("1234"))
+			System.out.println("PASS: authenticate");
+		
+		// Boolean deauth( String guid , String secret )
+		if (deauth("1234", "5678"))
+			System.out.println("PASS: deauth");		
+		
+		// Hotspot[] getHotspots( String guid , String secret, String lat, String lon, String r ) 
+		System.out.println(getHotspots("1234", "5678", "40.42", "-86.92", "1"));
+		
+		// Boolean submitData( String guid , String secret, String data )
+		File testFile = new File ("C:/Users/Administrator/Documents/WorkPlace/ServerCommunications/cache/jsonfile.json") ;
+		if (submitData("1234", "5678", testFile))
+			System.out.println("PASS: submitData");
+		else
+			System.out.println("FAIL: submitData");
+	   
+	}
+	
 }
