@@ -58,10 +58,14 @@ exit;
 function addHotspot($con,$ent) {
 	if(isset($_POST['debug']))
 		echo "Adding hotspot<br>";
-	$query = "INSERT INTO hotspotlist (SSID,MAC,lat,lon,radius,meta) VALUES (\""
+	$isPublic = 1;
+	if(isset($ent->isPublic))
+		if(is_numeric($ent->isPublic))
+			$isPublic = $ent->isPublic;
+	$query = "INSERT INTO hotspotlist (SSID,MAC,lat,lon,radius,isPublic,meta) VALUES (\""
 		.mysqli_real_escape_string($con,$ent->SSID)."\",\""
 		.mysqli_real_escape_string($con,$ent->MAC)."\","
-		.$ent->lat.",".$ent->lon.",30,null)";
+		.$ent->lat.",".$ent->lon.",30,$isPublic,null)";
 	mysqli_query($con,$query);
 	$query = "INSERT INTO editlist (UserGUID,HotspotID,lat,lon) VALUES (\""
 		.mysqli_real_escape_string($con,$_POST['guid'])."\",LAST_INSERT_ID(),".$ent->lat.",".$ent->lon.")";
@@ -90,7 +94,7 @@ function updateHotspot($con,$ent) {
 	}
 	mysqli_query($con,$query);
 	
-	$query = "SELECT ID,lat,lon FROM hotspotlist WHERE MAC=\"".$ent->MAC."\"";
+	$query = "SELECT ID,lat,lon,isPublic FROM hotspotlist WHERE MAC=\"".$ent->MAC."\"";
 	if(isset($_POST['debug'])) {
 		echo $query."<br>";
 	}
@@ -98,6 +102,12 @@ function updateHotspot($con,$ent) {
 	$hsid = $val['ID'];
 	$hslat = $val['lat'];
 	$hslon = $val['lon'];
+	
+	$isPublic = $val['isPublic'];
+	if(isset($ent->isPublic))
+		if(is_numeric($ent->isPublic))
+			$isPublic = $ent->isPublic;
+	
 	if(isset($_POST['debug'])) {
 		echo "ID: ".$hsid."<br>";
 	}
@@ -123,7 +133,7 @@ function updateHotspot($con,$ent) {
 			$maxRadius = $testRadius;
 	}
 	
-	$query = "UPDATE hotspotlist SET radius=".floor($maxRadius)." WHERE ID=".$hsid;
+	$query = "UPDATE hotspotlist SET radius=".floor($maxRadius).",isPublic=$isPublic WHERE ID=".$hsid;
 	if(isset($_POST['debug'])) {
 		echo $query."<br>";
 	}
