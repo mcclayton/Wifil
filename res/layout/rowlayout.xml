@@ -10,7 +10,7 @@
         android:layout_marginLeft="4dp"
         android:layout_marginRight="10dp"
         android:layout_marginTop="4dp"
-        android:src="@drawable/wifi_icon" >
+        android:src="@drawable/wifi_signal_1" >
     </ImageView>
 
     <TextView

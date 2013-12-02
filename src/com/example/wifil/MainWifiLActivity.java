@@ -207,19 +207,50 @@ public class MainWifilActivity extends Activity {
     	    ImageView imageView = (ImageView) rowView.findViewById(R.id.icon);
     	    textView.setText(values.get(position).SSID);
     	    
-    	    // Change the Wi-Fi icon based on signal strength
-    	    int signal = values.get(position).level;
+    	    // Change the Wi-Fi icon based on signal strength and security of the hotspot
+    	    ScanResult sr = values.get(position);
+    	    boolean isPublic = hotspotIsPublic(sr);
+    	    int signal = sr.level;
     	    if (signal >= -76) {
-    	      imageView.setImageResource(R.drawable.wifi_signal_4);
+    	    	if (isPublic) {
+    	    		imageView.setImageResource(R.drawable.wifi_signal_4);
+    	    	} else {
+    	    		imageView.setImageResource(R.drawable.wifi_signal_locked_4);
+    	    	}
     	    } else if (signal < -76 && signal >= -87 ) {
-    	      imageView.setImageResource(R.drawable.wifi_signal_3);
+    	    	if (isPublic) {
+    	    		imageView.setImageResource(R.drawable.wifi_signal_3);
+    	    	} else {
+    	    		imageView.setImageResource(R.drawable.wifi_signal_locked_3);
+    	    	}
     	    } else if (signal < -87 && signal >= -95 ) {
-      	      imageView.setImageResource(R.drawable.wifi_signal_2);
+    	    	if (isPublic) {
+    	    		imageView.setImageResource(R.drawable.wifi_signal_2);
+    	    	} else {
+    	    		imageView.setImageResource(R.drawable.wifi_signal_locked_2);
+    	    	}
       	    } else if (signal < -95) {
-      	      imageView.setImageResource(R.drawable.wifi_signal_1);
+    	    	if (isPublic) {
+    	    		imageView.setImageResource(R.drawable.wifi_signal_1);
+    	    	} else {
+    	    		imageView.setImageResource(R.drawable.wifi_signal_locked_1);
+    	    	}
       	    }
+
     	    progBar.setVisibility(ProgressBar.INVISIBLE);
     	    return rowView;
     	  }
-    	} 
+    	}
+    
+    private boolean hotspotIsPublic(ScanResult scanResult) {
+        final String cap = scanResult.capabilities;
+        final String[] securityModes = { "WEP", "PSK", "EAP" };
+        for (int i = securityModes.length - 1; i >= 0; i--) {
+            if (cap.contains(securityModes[i])) {
+                return false;
+            }
+        }  
+        return true;
+    }
+
 }
