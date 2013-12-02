@@ -91,89 +91,6 @@ public class ServerCommunication {
 		}
 	}
 
-	/*
-	 * Input: UrlString, File to post, name of the file to be posetd, a description of the file to be posted
-	 * 
-	 * The input file is transported to the input url destination with the given filename and filedescrpition 
-	 * as a POST request. an exception will be thrown if any sort of interruption occurs during the post
-	 */
-	public static void serverPost(String urlFile, File file, String[] variables, String[] values) {
-
-		String url = "http://wifil.bkingmedia.com/api/";
-
-		url += urlFile;
-
-		HttpPost postRequest = new HttpPost(url);
-		try {
-
-			/*// Add url parameters to the post request
-			List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
-			for (int i = 0; i < variables.length; i++) {
-				urlParameters.add(new BasicNameValuePair(variables[i], values[i]));
-			}
-			postRequest.setEntity(new UrlEncodedFormEntity(urlParameters));*/
-
-			MultipartEntity multiPartEntity = new MultipartEntity();
-
-			//test url request body
-			multiPartEntity.addPart(variables[0], new StringBody(values[0]));
-			multiPartEntity.addPart(variables[1], new StringBody(values[1]));
-			FileBody fileBody = new FileBody(file, "application/octect-stream");
-			multiPartEntity.addPart("data", fileBody);
-
-			postRequest.setEntity(multiPartEntity);
-		} catch (UnsupportedEncodingException ex) {
-			ex.printStackTrace();
-		}		
-
-		String responseString = "";
-
-		InputStream responseStream = null;
-		HttpClient client = new DefaultHttpClient();
-		try {
-			HttpResponse response = client.execute(postRequest);
-			if (response != null) {
-				HttpEntity responseEntity = response.getEntity();
-
-				if (responseEntity != null) {
-					responseStream = responseEntity.getContent();
-					if (responseStream != null) {
-						BufferedReader br = new BufferedReader(new InputStreamReader(responseStream));
-						String responseLine = br.readLine();
-						String tempResponseString = "";
-						while (responseLine != null) {
-							tempResponseString = tempResponseString + responseLine + System.getProperty("line.separator");
-							responseLine = br.readLine();
-						}
-						br.close();
-						if (tempResponseString.length() > 0) {
-							responseString = tempResponseString;
-						}
-					}
-				}
-			}
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		} catch (ClientProtocolException e) {
-			e.printStackTrace();
-		} catch (IllegalStateException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			if (responseStream != null) {
-				try {
-					responseStream.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-		client.getConnectionManager().shutdown();
-
-		System.out.println("\n"+responseString);
-	}
-
 	public static boolean authenticate( String guid ) {
 
 		// Build the input parameters for the post
@@ -241,19 +158,20 @@ public class ServerCommunication {
 		// Return the array of hotspots on success or null otherwise				
 	}
 
-	public static boolean submitData( String guid , String secret, File filedata ) {
-
-		//convert json file to string
-
+	public static Boolean submitData( String guid , String secret, String data ) {
+		
 		// Build the input parameters for the post
-		//String[] submitdate_variable = { "guid" , "secret" , "data" };
-		//String[] submitdate_value    = {  guid  ,  secret  ,  data  };
-
-		// Call post method
-		//String response = serverPost("submitdata.php", submitdate_variable, submitdate_value);		
-
+		String[] submitdate_variable = { "guid" , "secret" , "data" };
+		String[] submitdate_value    = {  guid  ,  secret  ,  data  };
+		
+		// Call post method, will echo 1 if the submit is bad and will respond give the error to the response String
+		String response = serverPost("submitdata.php", submitdate_variable, submitdate_value);		
+		
 		// If post method succeeded and the authentication value is good, return true 
-		return false;
-
+		if (response.equals("1"))
+			return true;
+		else
+			return false;
+		
 	}
 }
