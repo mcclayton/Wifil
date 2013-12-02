@@ -63,6 +63,9 @@ function addHotspot($con,$ent) {
 		.mysqli_real_escape_string($con,$ent->MAC)."\","
 		.$ent->lat.",".$ent->lon.",30,null)";
 	mysqli_query($con,$query);
+	$query = "INSERT INTO editlist (UserGUID,HotspotID,lat,lon) VALUES (\""
+		.mysqli_real_escape_string($con,$_POST['guid'])."\",LAST_INSERT_ID(),".$ent->lat.",".$ent->lon.")";
+	mysqli_query($con,$query);
 }
 
 function updateHotspot($con,$ent) {
@@ -86,6 +89,65 @@ function updateHotspot($con,$ent) {
 		echo $query."<br>";
 	}
 	mysqli_query($con,$query);
+	
+	$query = "SELECT ID,lat,lon FROM hotspotlist WHERE MAC=\"".$ent->MAC."\"";
+	if(isset($_POST['debug'])) {
+		echo $query."<br>";
+	}
+	$val = mysqli_fetch_array(mysqli_query($con,$query));
+	$hsid = $val['ID'];
+	$hslat = $val['lat'];
+	$hslon = $val['lon'];
+	if(isset($_POST['debug'])) {
+		echo "ID: ".$hsid."<br>";
+	}
+	
+	$query = "INSERT INTO editlist (UserGUID,HotspotID,lat,lon) VALUES (\""
+		.mysqli_real_escape_string($con,$_POST['guid'])."\",".$hsid.",".$ent->lat.",".$ent->lon.")";
+	if(isset($_POST['debug'])) {
+		echo $query."<br>";
+	}
+	mysqli_query($con,$query);
+	
+	$query = "SELECT lat,lon FROM editlist WHERE HotspotID=".$hsid;
+	if(isset($_POST['debug'])) {
+		echo $query."<br>";
+	}
+	$res = mysqli_query($con,$query);
+	$maxRadius = 20;
+	while($row = mysqli_fetch_array($res)) {
+		$testRadius = haversine($hslat,$hslon,$row['lat'],$row['lon']);
+		if(isset($_POST['debug']))
+			echo "test radius: ".$testRadius."<br>";
+		if($testRadius > $maxRadius)
+			$maxRadius = $testRadius;
+	}
+	
+	$query = "UPDATE hotspotlist SET radius=".floor($maxRadius)." WHERE ID=".$hsid;
+	if(isset($_POST['debug'])) {
+		echo $query."<br>";
+	}
+	mysqli_query($con,$query);
+}
+
+function haversine(
+  $latitudeFrom, $longitudeFrom, $latitudeTo, $longitudeTo, $earthRadius = 6378100)
+{
+  // convert from degrees to radians
+  $latFrom = deg2rad($latitudeFrom);
+  $lonFrom = deg2rad($longitudeFrom);
+  $latTo = deg2rad($latitudeTo);
+  $lonTo = deg2rad($longitudeTo);
+
+  $latDelta = $latTo - $latFrom;
+  $lonDelta = $lonTo - $lonFrom;
+
+  $angle = 2 * asin(sqrt(pow(sin($latDelta / 2), 2) +
+    cos($latFrom) * cos($latTo) * pow(sin($lonDelta / 2), 2)));
+  $val = $angle * $earthRadius;
+  if(isset($_POST['debug']))
+	echo "haversine ($latitudeFrom,$longitudeFrom) to ($latitudeTo,$longitudeTo) = $val<br>";
+  return $val;
 }
 
 

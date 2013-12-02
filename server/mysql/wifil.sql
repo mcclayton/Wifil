@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 28, 2013 at 04:41 AM
+-- Generation Time: Dec 02, 2013 at 05:57 PM
 -- Server version: 5.6.11
 -- PHP Version: 5.5.3
 
@@ -29,10 +29,42 @@ USE `wifil`;
 --
 
 CREATE TABLE IF NOT EXISTS `editlist` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
   `UserGUID` varchar(50) NOT NULL,
   `HotspotID` int(11) NOT NULL,
-  `ChangeData` varchar(100) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  `lat` decimal(10,4) NOT NULL,
+  `lon` decimal(10,4) NOT NULL,
+  `ChangeData` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`ID`),
+  KEY `HotspotID` (`HotspotID`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=55 ;
+
+--
+-- Dumping data for table `editlist`
+--
+
+INSERT INTO `editlist` (`ID`, `UserGUID`, `HotspotID`, `lat`, `lon`, `ChangeData`) VALUES
+(34, '1234', 10, '40.4000', '-86.9000', NULL),
+(35, '1234', 11, '40.4250', '-86.9238', NULL),
+(36, '1234', 12, '40.4251', '-86.9239', NULL),
+(37, '1234', 10, '40.4000', '-86.9000', NULL),
+(38, '1234', 11, '40.4250', '-86.9238', NULL),
+(39, '1234', 12, '40.4251', '-86.9239', NULL),
+(40, '1234', 10, '40.4000', '-86.9000', NULL),
+(41, '1234', 11, '40.4250', '-86.9238', NULL),
+(42, '1234', 12, '40.4251', '-86.9239', NULL),
+(43, '1234', 10, '40.4003', '-86.9000', NULL),
+(44, '1234', 11, '40.4250', '-86.9238', NULL),
+(45, '1234', 12, '40.4251', '-86.9239', NULL),
+(46, '1234', 10, '40.4003', '-86.9000', NULL),
+(47, '1234', 11, '40.4250', '-86.9238', NULL),
+(48, '1234', 12, '40.4251', '-86.9239', NULL),
+(49, '1234', 10, '40.4003', '-86.9000', NULL),
+(50, '1234', 11, '40.4250', '-86.9238', NULL),
+(51, '1234', 12, '40.4251', '-86.9239', NULL),
+(52, '1234', 10, '40.4001', '-86.9000', NULL),
+(53, '1234', 11, '40.4250', '-86.9238', NULL),
+(54, '1234', 12, '40.4251', '-86.9239', NULL);
 
 -- --------------------------------------------------------
 
@@ -47,18 +79,24 @@ CREATE TABLE IF NOT EXISTS `hotspotlist` (
   `lat` decimal(10,4) NOT NULL,
   `lon` decimal(10,4) NOT NULL,
   `radius` int(11) NOT NULL,
-  `meta` varchar(1000) NOT NULL,
-  `geohash` int(11) NOT NULL,
-  PRIMARY KEY (`ID`),
-  UNIQUE KEY `ID` (`ID`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=2 ;
+  `count` int(10) NOT NULL DEFAULT '1',
+  `meta` varchar(1000) DEFAULT NULL,
+  `geohash` int(11) DEFAULT NULL,
+  PRIMARY KEY (`MAC`),
+  UNIQUE KEY `ID` (`ID`),
+  KEY `lat` (`lat`),
+  KEY `lon` (`lon`)
+) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=13 ;
 
 --
 -- Dumping data for table `hotspotlist`
 --
 
-INSERT INTO `hotspotlist` (`ID`, `SSID`, `MAC`, `lat`, `lon`, `radius`, `meta`, `geohash`) VALUES
-(1, 'King', '00:1E:2A:6E:FB:A5', '40.4251', '-86.9239', 30, 'desc:"The Best Hotspot"\r\nrat:5', 31739461);
+INSERT INTO `hotspotlist` (`ID`, `SSID`, `MAC`, `lat`, `lon`, `radius`, `count`, `meta`, `geohash`) VALUES
+(10, 'New Hotspot', 'AB:CD:EF:AB:CD:EF', '40.4001', '-86.9000', 22, 8, NULL, 31739462),
+(11, 'PAL3.0', 'AA:AA:AA:AA:AA', '40.4250', '-86.9238', 20, 8, NULL, 31739461),
+(12, 'King', '00:1E:2A:6E:FB:A5', '40.4251', '-86.9239', 20, 8, NULL, 31739461),
+(6, 'PANERA', '00:24:a8:b3:b5:00', '39.2207', '-85.8877', 30, 1, NULL, 31566682);
 
 --
 -- Triggers `hotspotlist`
