@@ -229,7 +229,7 @@ public class ServerCommunication {
 			Hotspot[] hotspots = new Hotspot[hotspotArray.length()];
 			for (int i=0; i<hotspotArray.length(); i++) {
 				JSONObject hotspot = hotspotArray.getJSONObject(i);
-				hotspots[i] = new Hotspot(hotspot.getString("SSID"), hotspot.getString("MAC"), hotspot.getLong("lat"), hotspot.getLong("lon"), hotspot.getLong("radius"));
+				hotspots[i] = new Hotspot(hotspot.getString("SSID"), hotspot.getString("MAC"), hotspot.getDouble("lat"), hotspot.getDouble("lon"), hotspot.getDouble("radius"));
 			}
 			return hotspots;
 		} catch (Exception e) {

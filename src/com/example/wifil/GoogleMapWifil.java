@@ -1,14 +1,21 @@
 package com.example.wifil;
 
 import android.app.Activity;
+import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
+import com.google.android.gms.maps.GoogleMap.OnMyLocationChangeListener;
 import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -19,7 +26,7 @@ public class GoogleMapWifil extends Activity {
 	private GoogleMap mMap;
 	private boolean myLocationFound = false;
 	private Bundle extras = null;
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -64,10 +71,7 @@ public class GoogleMapWifil extends Activity {
 		mMap.getUiSettings().setAllGesturesEnabled(true);
 		mMap.getUiSettings().setCompassEnabled(true);
 
-		mMap.setOnMyLocationChangeListener(new GoogleMap.OnMyLocationChangeListener() {
-			//[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][]
-			//TODO Ensure that this is only done once. Also, if extras != null, then add a loading bar and if onMyLocationChange is not called within some epsilon time, display an error!!!!!!!!!!!!!!!!!
-			//******************************************************************************************************************************************************************************
+		mMap.setOnMyLocationChangeListener(new OnMyLocationChangeListener() {
 			@Override
 			public void onMyLocationChange(Location loc) {
 				if (!myLocationFound) {
@@ -88,6 +92,37 @@ public class GoogleMapWifil extends Activity {
 			}
 		});
 
+		mMap.setOnCameraChangeListener(new OnCameraChangeListener() {
+			@Override
+			public void onCameraChange(CameraPosition position) {
+				// TODO Request nearby hotspots and pin them to the map.
+				final LatLng cameraCoords = position.target;
+				//float zoomLevel = position.zoom;
+				
+				// Get the hotspots on a different thread so the UI doesn't slow down
+				new Thread(new Runnable() {
+			        public void run() {					
+			        	
+						final Hotspot[] hotspots = ServerCommunication.getHotspots("1234", "5678", cameraCoords.latitude+"", cameraCoords.longitude+"", "5");
+						if (hotspots != null) {
+							Handler handler = new Handler(Looper.getMainLooper());
+							handler.post(new Runnable(){
+								@Override
+								public void run() {
+									for (Hotspot hs : hotspots) {
+										LatLng latlng = new LatLng(hs.getLat(), hs.getLon());
+										mMap.addCircle(new CircleOptions().center(latlng).radius(hs.getRadius()).strokeColor(Color.BLUE).strokeWidth(2).fillColor(Color.TRANSPARENT));
+										mMap.addMarker(new MarkerOptions().position(latlng).draggable(false).title(hs.getSSID()).snippet("["+hs.getMac()+"]"));
+									}
+								} 
+							});
+							
+						}
+			        }
+			    }).start();
+			}
+		});
+
 		// Uncomment if I decide I want to delete pinned hotspots onInfoWindowClick
 		/*
 		mMap.setOnInfoWindowClickListener(new OnInfoWindowClickListener() {
@@ -95,8 +130,8 @@ public class GoogleMapWifil extends Activity {
 				marker.remove();
 			}
 		});
-		*/
-		 
+		 */
+
 	}
 
 }
