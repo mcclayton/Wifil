@@ -1,77 +1,102 @@
 package com.example.wifil;
 
 import android.app.Activity;
-import android.location.Criteria;
 import android.location.Location;
-import android.location.LocationManager;
 import android.os.Bundle;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.GoogleMap.OnMapLongClickListener;
-import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-public class GoogleMapWifil extends Activity implements OnMapLongClickListener {
-	GoogleMap map;
-	LocationManager locationManager;
-	Location myLocation;
+public class GoogleMapWifil extends Activity {
+	/**
+	 * Note that this may be null if the Google Play services APK is not available.
+	 */
+	private GoogleMap mMap;
+	private boolean myLocationFound = false;
+	private Bundle extras = null;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_google_map_wifil);
-		
-		map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
-        map.setOnMapLongClickListener(this);
-        
-        map.setMyLocationEnabled(true);
-        
-        //Open the map on my current location
-        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-        // Create a criteria object to retrieve provider
-        Criteria criteria = new Criteria();
-        // Make sure the current location is found with a high degree of accuracy
-        criteria.setAccuracy(Criteria.ACCURACY_FINE);
-        // Get the name of the best provider
-        String provider = locationManager.getBestProvider(criteria, true);
-        // Get Current Location
-        myLocation = locationManager.getLastKnownLocation(provider);
-        //Get latitude and longitude
-        LatLng latlng = new LatLng(myLocation.getLatitude(), myLocation.getLongitude());
-        //move camera to my location
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(latlng, 13));
-        
-        //Enable compass, rotate gestures and tilt gestures
-        GoogleMapOptions options = new GoogleMapOptions();
-        options.mapType(GoogleMap.MAP_TYPE_SATELLITE).compassEnabled(true).rotateGesturesEnabled(true).tiltGesturesEnabled(true);
-     
-        Bundle extras = getIntent().getExtras();
-        if (extras != null) {
-            String ssid = extras.getString("SSID");
-            String bssid = extras.getString("BSSID");
-            
-            provider = locationManager.getBestProvider(criteria, true);
-            myLocation = locationManager.getLastKnownLocation(provider);
-            
-    		// Place a marker at the current location with the selected Wi-Fi information in the info window
-            map.addMarker(new MarkerOptions().position(new LatLng(myLocation.getLatitude(), myLocation.getLongitude())).draggable(true).title(ssid).snippet("["+bssid+"]"));
-            Toast.makeText(getBaseContext(), "Wi-Fi hotspot: "+ssid+" has been pinned.", Toast.LENGTH_LONG).show();
-        }
-        //Uncomment if I want to delete a marker on info window click
-        /*
-        map.setOnInfoWindowClickListener(new OnInfoWindowClickListener() {
-            public void onInfoWindowClick(Marker marker) {
-                marker.remove();
-            }
-        });
-        */
-    }
-    
-	@Override
-	public void onMapLongClick(final LatLng point) {
-		map.addMarker(new MarkerOptions().position(point).draggable(true));	
+		extras = getIntent().getExtras();
+		if (extras != null) {
+			ProgressBar pb = (ProgressBar) findViewById(R.id.pinningProgressBar);
+			pb.setVisibility(ProgressBar.VISIBLE);
+		}
+		setUpMapIfNeeded();
 	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		setUpMapIfNeeded();
+	}
+
+	/**
+	 * Sets up the map if it is possible to do so (i.e., the Google Play services APK is correctly
+	 * installed) and the map has not already been instantiated.. This will ensure that we only ever
+	 * call setUpMap() once when mMap is not null.
+	 */
+	private void setUpMapIfNeeded() {
+		// Do a null check to confirm that we have not already instantiated the map.
+		if (mMap == null) {
+			// Try to obtain the map from the SupportMapFragment.
+			mMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
+			// Check if we were successful in obtaining the map.
+			if (mMap != null) {
+				setUpMap();
+			}
+		}
+	}
+
+	/**
+	 * This is where we can add markers or lines, add listeners or move the camera.
+	 * This should only be called once and when we are sure that mMap is not null.
+	 */
+	private void setUpMap() {
+		mMap.setMyLocationEnabled(true);
+		mMap.getUiSettings().setAllGesturesEnabled(true);
+		mMap.getUiSettings().setCompassEnabled(true);
+
+		mMap.setOnMyLocationChangeListener(new GoogleMap.OnMyLocationChangeListener() {
+			//[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][]
+			//TODO Ensure that this is only done once. Also, if extras != null, then add a loading bar and if onMyLocationChange is not called within some epsilon time, display an error!!!!!!!!!!!!!!!!!
+			//******************************************************************************************************************************************************************************
+			@Override
+			public void onMyLocationChange(Location loc) {
+				if (!myLocationFound) {
+					ProgressBar pb = (ProgressBar) findViewById(R.id.pinningProgressBar);
+					pb.setVisibility(ProgressBar.INVISIBLE);
+					myLocationFound = true;
+					LatLng myCoords = new LatLng(loc.getLatitude(), loc.getLongitude());
+					mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myCoords, 13));
+
+					if (extras != null) {
+						String ssid = extras.getString("SSID");
+						String bssid = extras.getString("BSSID");       
+						// Place a marker at the current location with the selected Wi-Fi information in the info window
+						mMap.addMarker(new MarkerOptions().position(myCoords).draggable(true).title(ssid).snippet("["+bssid+"]"));
+						Toast.makeText(getBaseContext(), "Wi-Fi hotspot: "+ssid+" has been pinned.", Toast.LENGTH_LONG).show();
+					}
+				}
+			}
+		});
+
+		// Uncomment if I decide I want to delete pinned hotspots onInfoWindowClick
+		/*
+		mMap.setOnInfoWindowClickListener(new OnInfoWindowClickListener() {
+			public void onInfoWindowClick(Marker marker) {
+				marker.remove();
+			}
+		});
+		*/
+		 
+	}
+
 }

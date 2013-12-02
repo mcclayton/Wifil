@@ -10,4 +10,13 @@
           android:layout_height="match_parent"
           android:name="com.google.android.gms.maps.MapFragment"/>
 
+   <ProgressBar
+       android:id="@+id/pinningProgressBar"
+       style="?android:attr/progressBarStyleLarge"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:visibility="invisible"
+       android:layout_centerHorizontal="true"
+       android:layout_centerVertical="true" />
+
 </RelativeLayout>
