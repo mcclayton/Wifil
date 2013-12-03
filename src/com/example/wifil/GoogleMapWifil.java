@@ -2,6 +2,11 @@ package com.example.wifil;
 
 import java.util.HashMap;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONTokener;
+
 import android.app.Activity;
 import android.graphics.Color;
 import android.location.Location;
@@ -127,20 +132,28 @@ public class GoogleMapWifil extends Activity {
 					final LatLng myCoords = new LatLng(loc.getLatitude(), loc.getLongitude());
 
 					if (extras != null) {
-						final String ssid = extras.getString("SSID");
-						final String bssid = extras.getString("BSSID");  
-						final boolean isPublicBool = extras.getBoolean("ISPUBLIC");  
-						final int isPublic = isPublicBool?1:0;
+						// Parse JSON data passed over from MainWifilActivity
+						JSONArray hotspotArray = null;
+						try {
+							hotspotArray = (JSONArray) new JSONTokener(extras.getString("JSON_DATA")).nextValue();
 
-						// Post the selected hotspot to the server
-						new Thread(new Runnable() {
-							public void run() {
-								Hotspot hs = new Hotspot(ssid, bssid, myCoords.latitude, myCoords.longitude, 0, isPublic);
-								ServerCommunication.submitData("1234", "5678", ServerCommunication.toJSON(hs));
+							// Create an array of hotspot objects
+							final Hotspot[] hotspots = new Hotspot[hotspotArray.length()];
+							for (int i=0; i<hotspotArray.length(); i++) {
+								JSONObject hotspot = hotspotArray.getJSONObject(i);
+								hotspots[i] = new Hotspot(hotspot.getString("SSID"), hotspot.getString("MAC"), myCoords.latitude, myCoords.longitude, 0, hotspot.getInt("isPublic"));
 							}
-						}).start();
-
-						Toast.makeText(getBaseContext(), "Wi-Fi hotspot: "+ssid+" has been pinned.", Toast.LENGTH_LONG).show();
+							Toast.makeText(getBaseContext(), "Wi-Fi hotspot(s) have been pinned.", Toast.LENGTH_LONG).show();
+							// Post the selected hotspot to the server
+							new Thread(new Runnable() {
+								public void run() {
+									ServerCommunication.submitData("1234", "5678", ServerCommunication.toJSON(hotspots));
+								}
+							}).start();
+						} catch (JSONException e) {
+							e.printStackTrace();
+							Toast.makeText(getBaseContext(), "Wi-Fi hotspot could not be pinned.\n Check network connection.", Toast.LENGTH_LONG).show();
+						}
 					}
 					mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myCoords, 13));
 				}

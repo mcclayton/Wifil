@@ -9,6 +9,7 @@
     <string name="view_map_button_text">Return to Map</string>
     <string name="start_button_text">Start Wifil</string>
     <string name="loading_text">Starting Wifil...</string>
+    <string name="pinButtonText">Pin All Hotspots</string>
     
     
      <string-array name="map_types">

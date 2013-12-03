@@ -20,11 +20,19 @@
         android:layout_centerHorizontal="true"
         android:text="@string/view_map_button_text" />
     
+    <Button
+        android:id="@+id/pinAllButton"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/viewMapButton"
+        android:layout_centerHorizontal="true"
+        android:text="@string/pinButtonText" />
+    
         <ListView
             android:id="@+id/hotspotListView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_above="@+id/viewMapButton"
+            android:layout_above="@+id/pinAllButton"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true" >
 

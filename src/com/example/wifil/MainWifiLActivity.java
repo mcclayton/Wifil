@@ -3,6 +3,10 @@ package com.example.wifil;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
@@ -87,15 +91,22 @@ public class MainWifilActivity extends Activity {
             }
         });
         
+        final Button pinAllButton = (Button) findViewById(R.id.pinAllButton);
+        pinAllButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+            	Intent mapIntent = new Intent(getBaseContext(), GoogleMapWifil.class);
+            	mapIntent.putExtra("JSON_DATA", toJSON(hotspotList));
+            	startActivity(mapIntent);
+            }
+        });
+        
 		dialogClickListener = new DialogInterface.OnClickListener() {
 		    @Override
 		    public void onClick(DialogInterface dialog, int which) {
 		        switch (which){
 		        case DialogInterface.BUTTON_POSITIVE:
 	            	Intent mapIntent = new Intent(getBaseContext(), GoogleMapWifil.class);
-	            	mapIntent.putExtra("SSID", selectedHotspot.SSID);
-	            	mapIntent.putExtra("BSSID", selectedHotspot.BSSID);
-	            	mapIntent.putExtra("ISPUBLIC", hotspotIsPublic(selectedHotspot));
+	            	mapIntent.putExtra("JSON_DATA", toJSON(hotspotList));
 	            	startActivity(mapIntent);
 		            break;
 		        }
@@ -140,8 +151,7 @@ public class MainWifilActivity extends Activity {
                 mainWifi = (WifiManager) getSystemService(Context.WIFI_SERVICE);
 
                 receiverWifi = new WifiReceiver();
-                registerReceiver(receiverWifi, new IntentFilter(
-                        WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
+                registerReceiver(receiverWifi, new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION));
                 mainWifi.startScan();
             }
         });
@@ -242,6 +252,47 @@ public class MainWifilActivity extends Activity {
     	    return rowView;
     	  }
     	}
+    
+    private String toJSON(ArrayList<ScanResult> hotspots) {
+		JSONArray myArr = new JSONArray();
+		try {
+			for (ScanResult hs: hotspots) {
+				JSONObject tempObj = new JSONObject();
+				tempObj.put("SSID", hs.SSID+"");
+				tempObj.put("MAC", hs.BSSID+"");
+				if (hotspotIsPublic(hs))
+					tempObj.put("isPublic", "1");
+				else
+					tempObj.put("isPublic", "0");
+				tempObj.put("meta", null);
+				myArr.put(tempObj);	
+			}				
+			return myArr.toString();
+		} catch (JSONException e) {
+			e.printStackTrace();
+			return null;
+		}
+    }
+    
+    private String toJSON(ScanResult scanResult) {
+		JSONArray myArr = new JSONArray();
+		try {
+				JSONObject tempObj = new JSONObject();
+				tempObj.put("SSID", scanResult.SSID+"");
+				tempObj.put("MAC", scanResult.BSSID+"");
+				if (hotspotIsPublic(scanResult))
+					tempObj.put("isPublic", 1);
+				else
+					tempObj.put("isPublic", 0);
+				tempObj.put("meta", null);
+				myArr.put(tempObj);	
+				
+			return myArr.toString();
+		} catch (JSONException e) {
+			e.printStackTrace();
+			return null;
+		}
+    }
     
     private boolean hotspotIsPublic(ScanResult scanResult) {
         final String cap = scanResult.capabilities;
