@@ -51,6 +51,7 @@ public class GoogleMapWifil extends Activity {
 
 	private String[] mMapTypes;
 	private boolean circlesVisible = false;
+	private boolean heatMapping = false;
 
 
 	@Override
@@ -255,13 +256,35 @@ public class GoogleMapWifil extends Activity {
 				circlesVisible = false;
 			} else {
 				for (Circle c : markerHashMap.values()) {
+					c.setStrokeWidth(2);
+					c.setFillColor(Color.TRANSPARENT);
 					c.setVisible(true);
 				}
+				heatMapping = false;
 				circlesVisible = true;
 			}
 			mDrawerList.setItemChecked(position, false);
 			mDrawerList.setItemChecked(lastSelected, true);
+		} else if(position == 5) {
+			// Toggle signal circles
+			if (heatMapping) { 
+				for (Circle c : markerHashMap.values()) {
+					c.setVisible(false);
+				}
+				heatMapping = false;
+			} else {
+				for (Circle c : markerHashMap.values()) {
+					c.setStrokeWidth(0);
+					c.setFillColor(Color.argb(25, 255, 0, 0));
+					c.setVisible(true);
+				}
+				heatMapping = true;
+				circlesVisible = false;
+			}
+			mDrawerList.setItemChecked(position, false);
+			mDrawerList.setItemChecked(lastSelected, true);
 		}
+		
 
 		mDrawerLayout.closeDrawer(mDrawerList);
 	}
