@@ -16,6 +16,7 @@
         <item>Hybrid View</item>
         <item>Satelite View</item>
         <item>Terrain View</item>
+        <item>Toggle Signal Display</item>
      </string-array>
      
     <string name="drawer_open">Open navigation drawer</string>

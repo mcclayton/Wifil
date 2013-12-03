@@ -24,6 +24,7 @@ import com.google.android.gms.maps.GoogleMap.OnMyLocationChangeListener;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -36,13 +37,15 @@ public class GoogleMapWifil extends Activity {
 	private GoogleMap mMap;
 	private boolean myLocationFound = false;
 	private Bundle extras = null;
-	private HashMap<String, Integer> markerHashMap = new HashMap<String, Integer>();
+	private HashMap<String, Circle> markerHashMap = new HashMap<String, Circle>();
 
 	private DrawerLayout mDrawerLayout;
 	private ListView mDrawerList;
 	private ActionBarDrawerToggle mDrawerToggle;
+	private int lastSelected = 0;
 
 	private String[] mMapTypes;
+	private boolean circlesVisible = false;
 
 
 	@Override
@@ -122,7 +125,6 @@ public class GoogleMapWifil extends Activity {
 					pb.setVisibility(ProgressBar.INVISIBLE);
 					myLocationFound = true;
 					final LatLng myCoords = new LatLng(loc.getLatitude(), loc.getLongitude());
-					mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myCoords, 13));
 
 					if (extras != null) {
 						final String ssid = extras.getString("SSID");
@@ -140,6 +142,7 @@ public class GoogleMapWifil extends Activity {
 
 						Toast.makeText(getBaseContext(), "Wi-Fi hotspot: "+ssid+" has been pinned.", Toast.LENGTH_LONG).show();
 					}
+					mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myCoords, 13));
 				}
 			}
 		});
@@ -163,9 +166,15 @@ public class GoogleMapWifil extends Activity {
 									for (Hotspot hs : hotspots) {
 										// Don't pin markers more than once
 										if(!markerHashMap.containsKey(hs.getMac())) {
-											markerHashMap.put(hs.getMac(), 1);
 											LatLng latlng = new LatLng(hs.getLat(), hs.getLon());
-											mMap.addCircle(new CircleOptions().center(latlng).radius(hs.getRadius()).strokeColor(Color.BLUE).strokeWidth(2).fillColor(Color.TRANSPARENT));
+											Circle circ = mMap.addCircle(new CircleOptions().center(latlng).radius(hs.getRadius()).strokeColor(Color.BLUE).strokeWidth(2).fillColor(Color.TRANSPARENT));
+											
+											if (circlesVisible)
+												circ.setVisible(true);
+											else
+												circ.setVisible(false);
+											
+											markerHashMap.put(hs.getMac(), circ);
 											// Add a green marker if hotspot is public, or red otherwise
 											if (hs.getIsPublic() == 1)
 												mMap.addMarker(new MarkerOptions().position(latlng).draggable(false).title(hs.getSSID()).snippet("["+hs.getMac()+"]")).setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
@@ -203,17 +212,43 @@ public class GoogleMapWifil extends Activity {
 
 	private void selectItem(int position) {
 		// update the main content by replacing fragments
-		if(position == 0)
+		if(position == 0) {
 			mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-		else if(position==1)
+			mDrawerList.setItemChecked(position, true);
+			lastSelected = 0;
+		}
+		else if(position==1) {
 			mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
-		else if(position ==2)
+			mDrawerList.setItemChecked(position, true);
+			lastSelected = 1;
+		}
+		else if(position ==2) {
 			mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
-		else if(position == 3)
+			mDrawerList.setItemChecked(position, true);
+			lastSelected = 2;
+		}
+		else if(position == 3) {
 			mMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
+			mDrawerList.setItemChecked(position, true);
+			lastSelected = 3;
+		}
+		else if(position == 4) {
+			// Toggle signal circles
+			if (circlesVisible) { 
+				for (Circle c : markerHashMap.values()) {
+					c.setVisible(false);
+				}
+				circlesVisible = false;
+			} else {
+				for (Circle c : markerHashMap.values()) {
+					c.setVisible(true);
+				}
+				circlesVisible = true;
+			}
+			mDrawerList.setItemChecked(position, false);
+			mDrawerList.setItemChecked(lastSelected, true);
+		}
 
-		// update selected item and title, then close the drawer
-		mDrawerList.setItemChecked(position, true);
 		mDrawerLayout.closeDrawer(mDrawerList);
 	}
 
