@@ -1,8 +1,11 @@
 package com.example.wifil;
 
+import java.util.HashMap;
+
 import android.app.Activity;
 import android.graphics.Color;
 import android.location.Location;
+import android.net.wifi.ScanResult;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -27,6 +30,7 @@ public class GoogleMapWifil extends Activity {
 	private GoogleMap mMap;
 	private boolean myLocationFound = false;
 	private Bundle extras = null;
+	private HashMap<String, Integer> markerHashMap = new HashMap<String, Integer>();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -111,14 +115,18 @@ public class GoogleMapWifil extends Activity {
 								@Override
 								public void run() {
 									for (Hotspot hs : hotspots) {
-										LatLng latlng = new LatLng(hs.getLat(), hs.getLon());
-										mMap.addCircle(new CircleOptions().center(latlng).radius(hs.getRadius()).strokeColor(Color.BLUE).strokeWidth(2).fillColor(Color.TRANSPARENT));
-										// Add a green marker if hotspot is public, or red otherwise
-										if (hs.getIsPublic() == 1)
-											mMap.addMarker(new MarkerOptions().position(latlng).draggable(false).title(hs.getSSID()).snippet("["+hs.getMac()+"]")).setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
-										else {
-											mMap.addMarker(new MarkerOptions().position(latlng).draggable(false).title(hs.getSSID()).snippet("["+hs.getMac()+"]"));
-										}
+						        		// Don't pin markers more than once
+						            	if(!markerHashMap.containsKey(hs.getMac())) {
+						            		markerHashMap.put(hs.getMac(), 1);
+											LatLng latlng = new LatLng(hs.getLat(), hs.getLon());
+											mMap.addCircle(new CircleOptions().center(latlng).radius(hs.getRadius()).strokeColor(Color.BLUE).strokeWidth(2).fillColor(Color.TRANSPARENT));
+											// Add a green marker if hotspot is public, or red otherwise
+											if (hs.getIsPublic() == 1)
+												mMap.addMarker(new MarkerOptions().position(latlng).draggable(false).title(hs.getSSID()).snippet("["+hs.getMac()+"]")).setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
+											else {
+												mMap.addMarker(new MarkerOptions().position(latlng).draggable(false).title(hs.getSSID()).snippet("["+hs.getMac()+"]"));
+											}
+						            	}
 									}
 								} 
 							});
