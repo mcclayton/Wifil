@@ -1,31 +1,25 @@
 package com.example.wifil;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.mime.MultipartEntity;
-import org.apache.http.entity.mime.content.FileBody;
-import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
-@SuppressWarnings("deprecation")
 public class ServerCommunication {
 
 	/*
@@ -166,7 +160,6 @@ public class ServerCommunication {
 		
 		// Call post method, will echo 1 if the submit is bad and will respond give the error to the response String
 		String response = serverPost("submitdata.php", submitdate_variable, submitdate_value);		
-		
 		// If post method succeeded and the authentication value is good, return true 
 		if (response.equals("1"))
 			return true;
@@ -174,4 +167,43 @@ public class ServerCommunication {
 			return false;
 		
 	}
+	
+	public static String toJSON(Hotspot[] hotspots) {
+		JSONArray myArr = new JSONArray();
+		try {
+			for (Hotspot hs: hotspots) {
+				JSONObject tempObj = new JSONObject();
+				tempObj.put("SSID", hs.getSSID()+"");
+				tempObj.put("MAC", hs.getMac()+"");
+				tempObj.put("lat", hs.getLat()+"");
+				tempObj.put("lon", hs.getLon()+"");
+				tempObj.put("isPublic", hs.getIsPublic()+"");
+				tempObj.put("meta", null);
+				myArr.put(tempObj);	
+			}				
+			return myArr.toString();
+		} catch (JSONException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	public static String toJSON(Hotspot hs) {
+		JSONArray myArr = new JSONArray();
+		try {
+				JSONObject tempObj = new JSONObject();
+				tempObj.put("SSID", hs.getSSID()+"");
+				tempObj.put("MAC", hs.getMac()+"");
+				tempObj.put("lat", hs.getLat()+"");
+				tempObj.put("lon", hs.getLon()+"");
+				tempObj.put("isPublic", hs.getIsPublic()+"");
+				tempObj.put("meta", null);
+				myArr.put(tempObj);	
+				
+			return myArr.toString();
+		} catch (JSONException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
 }

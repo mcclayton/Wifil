@@ -5,7 +5,6 @@ import java.util.HashMap;
 import android.app.Activity;
 import android.graphics.Color;
 import android.location.Location;
-import android.net.wifi.ScanResult;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -83,14 +82,21 @@ public class GoogleMapWifil extends Activity {
 					ProgressBar pb = (ProgressBar) findViewById(R.id.pinningProgressBar);
 					pb.setVisibility(ProgressBar.INVISIBLE);
 					myLocationFound = true;
-					LatLng myCoords = new LatLng(loc.getLatitude(), loc.getLongitude());
+					final LatLng myCoords = new LatLng(loc.getLatitude(), loc.getLongitude());
 					mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myCoords, 13));
 
 					if (extras != null) {
-						String ssid = extras.getString("SSID");
-						String bssid = extras.getString("BSSID");       
-						// Place a marker at the current location with the selected Wi-Fi information in the info window
-						mMap.addMarker(new MarkerOptions().position(myCoords).draggable(true).title(ssid).snippet("["+bssid+"]"));
+						final String ssid = extras.getString("SSID");
+						final String bssid = extras.getString("BSSID");  
+						
+						// Post the selected hotspot to the server
+						new Thread(new Runnable() {
+					        public void run() {
+					        	Hotspot hs = new Hotspot(ssid, bssid, myCoords.latitude, myCoords.longitude, 0, 0);
+					        	ServerCommunication.submitData("1234", "5678", ServerCommunication.toJSON(hs));
+					        }
+						}).start();
+						
 						Toast.makeText(getBaseContext(), "Wi-Fi hotspot: "+ssid+" has been pinned.", Toast.LENGTH_LONG).show();
 					}
 				}
@@ -100,7 +106,6 @@ public class GoogleMapWifil extends Activity {
 		mMap.setOnCameraChangeListener(new OnCameraChangeListener() {
 			@Override
 			public void onCameraChange(CameraPosition position) {
-				// TODO Request nearby hotspots and pin them to the map.
 				final LatLng cameraCoords = position.target;
 				//float zoomLevel = position.zoom;
 				
