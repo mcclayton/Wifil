@@ -8,6 +8,12 @@ import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.widget.DrawerLayout;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -22,6 +28,7 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+
 public class GoogleMapWifil extends Activity {
 	/**
 	 * Note that this may be null if the Google Play services APK is not available.
@@ -30,6 +37,13 @@ public class GoogleMapWifil extends Activity {
 	private boolean myLocationFound = false;
 	private Bundle extras = null;
 	private HashMap<String, Integer> markerHashMap = new HashMap<String, Integer>();
+	
+	private DrawerLayout mDrawerLayout;
+    private ListView mDrawerList;
+    private ActionBarDrawerToggle mDrawerToggle;
+    
+    private String[] mMapTypes;
+
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +55,35 @@ public class GoogleMapWifil extends Activity {
 			pb.setVisibility(ProgressBar.VISIBLE);
 		}
 		setUpMapIfNeeded();
+		mMapTypes = getResources().getStringArray(R.array.map_types);
+		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mDrawerList = (ListView) findViewById(R.id.left_drawer);
+        
+     // set up the drawer's list view with items and click listener
+        mDrawerList.setAdapter(new ArrayAdapter<String>(this,
+                R.layout.drawer_list_item, mMapTypes));
+        mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
+       
+        mDrawerToggle = new ActionBarDrawerToggle(
+                this,                  /* host Activity */
+                mDrawerLayout,         /* DrawerLayout object */
+                R.drawable.common_signin_btn_icon_normal_light,  /* nav drawer image to replace 'Up' caret */
+                R.string.drawer_open,  /* "open drawer" description for accessibility */
+                R.string.drawer_close  /* "close drawer" description for accessibility */
+                );
+     
+        mDrawerLayout.setDrawerListener(mDrawerToggle); 
+     // enable ActionBar app icon to behave as action to toggle nav drawer
+        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getActionBar().setHomeButtonEnabled(true);
+
+        
+       
+
+        if (savedInstanceState == null) {
+            selectItem(0);
+        }
+
 	}
 
 	@Override
@@ -152,5 +195,30 @@ public class GoogleMapWifil extends Activity {
 		 */
 
 	}
+	
+	private class DrawerItemClickListener implements ListView.OnItemClickListener {
+        @Override
+      public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            selectItem(position);
+        }
+    }
+	
+	private void selectItem(int position) {
+        // update the main content by replacing fragments
+		if(position == 0)
+			mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+		else if(position==1)
+			mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+		else if(position ==2)
+			mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
+		else if(position == 3)
+			mMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
+		
+        // update selected item and title, then close the drawer
+        mDrawerList.setItemChecked(position, true);
+        mDrawerLayout.closeDrawer(mDrawerList);
+    }
+
+
 
 }

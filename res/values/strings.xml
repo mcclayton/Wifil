@@ -10,4 +10,17 @@
     <string name="start_button_text">Start Wifil</string>
     <string name="loading_text">Starting Wifil...</string>
     
+    
+     <string-array name="map_types">
+        <item>Normal View</item>
+        <item>Hybrid View</item>
+        <item>Satelite View</item>
+        <item>Terrain View</item>
+     </string-array>
+     
+    <string name="drawer_open">Open navigation drawer</string>
+    <string name="drawer_close">Close navigation drawer</string>
+    <string name="action_websearch">Web search</string>
+    <string name="app_not_available">Sorry, there\'s no web browser available</string>
+    
 </resources>

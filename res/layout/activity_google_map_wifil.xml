@@ -3,7 +3,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".GoogleMapWifil" >
-
+<android.support.v4.widget.DrawerLayout
+    android:id="@+id/drawer_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
    <fragment
           android:id="@+id/map"
           android:layout_width="match_parent"
@@ -18,5 +21,13 @@
        android:visibility="invisible"
        android:layout_centerHorizontal="true"
        android:layout_centerVertical="true" />
-
+   <ListView android:id="@+id/left_drawer"
+        android:layout_width="240dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:choiceMode="singleChoice"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="0dp"
+        android:background="#111"/>
+</android.support.v4.widget.DrawerLayout>
 </RelativeLayout>
