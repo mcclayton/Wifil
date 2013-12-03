@@ -94,9 +94,7 @@ public class MainWifilActivity extends Activity {
         final Button pinAllButton = (Button) findViewById(R.id.pinAllButton);
         pinAllButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-            	Intent mapIntent = new Intent(getBaseContext(), GoogleMapWifil.class);
-            	mapIntent.putExtra("JSON_DATA", toJSON(hotspotList));
-            	startActivity(mapIntent);
+				 builder.setMessage("Are you sure you want to place a pin for all hotpots?").setPositiveButton("Yes", dialogClickListener).setNegativeButton("No", dialogClickListener).show();
             }
         });
         
@@ -105,11 +103,18 @@ public class MainWifilActivity extends Activity {
 		    public void onClick(DialogInterface dialog, int which) {
 		        switch (which){
 		        case DialogInterface.BUTTON_POSITIVE:
-	            	Intent mapIntent = new Intent(getBaseContext(), GoogleMapWifil.class);
-	            	mapIntent.putExtra("JSON_DATA", toJSON(hotspotList));
-	            	startActivity(mapIntent);
+		        	if (selectedHotspot != null) {
+		        		Intent mapIntent = new Intent(getBaseContext(), GoogleMapWifil.class);
+		        		mapIntent.putExtra("JSON_DATA", toJSON(selectedHotspot));
+		        		startActivity(mapIntent);
+		        	} else {
+		        		Intent mapIntent = new Intent(getBaseContext(), GoogleMapWifil.class);
+		        		mapIntent.putExtra("JSON_DATA", toJSON(hotspotList));
+		        		startActivity(mapIntent);
+		        	}
 		            break;
 		        }
+		        selectedHotspot = null;
 		    }
 		};
         

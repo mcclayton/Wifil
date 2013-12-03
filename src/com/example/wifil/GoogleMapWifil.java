@@ -148,6 +148,7 @@ public class GoogleMapWifil extends Activity {
 							new Thread(new Runnable() {
 								public void run() {
 									ServerCommunication.submitData("1234", "5678", ServerCommunication.toJSON(hotspots));
+									System.out.println(ServerCommunication.toJSON(hotspots));
 								}
 							}).start();
 						} catch (JSONException e) {
