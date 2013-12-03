@@ -37,12 +37,12 @@ public class GoogleMapWifil extends Activity {
 	private boolean myLocationFound = false;
 	private Bundle extras = null;
 	private HashMap<String, Integer> markerHashMap = new HashMap<String, Integer>();
-	
+
 	private DrawerLayout mDrawerLayout;
-    private ListView mDrawerList;
-    private ActionBarDrawerToggle mDrawerToggle;
-    
-    private String[] mMapTypes;
+	private ListView mDrawerList;
+	private ActionBarDrawerToggle mDrawerToggle;
+
+	private String[] mMapTypes;
 
 
 	@Override
@@ -57,32 +57,32 @@ public class GoogleMapWifil extends Activity {
 		setUpMapIfNeeded();
 		mMapTypes = getResources().getStringArray(R.array.map_types);
 		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        mDrawerList = (ListView) findViewById(R.id.left_drawer);
-        
-     // set up the drawer's list view with items and click listener
-        mDrawerList.setAdapter(new ArrayAdapter<String>(this,
-                R.layout.drawer_list_item, mMapTypes));
-        mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
-       
-        mDrawerToggle = new ActionBarDrawerToggle(
-                this,                  /* host Activity */
-                mDrawerLayout,         /* DrawerLayout object */
-                R.drawable.common_signin_btn_icon_normal_light,  /* nav drawer image to replace 'Up' caret */
-                R.string.drawer_open,  /* "open drawer" description for accessibility */
-                R.string.drawer_close  /* "close drawer" description for accessibility */
-                );
-     
-        mDrawerLayout.setDrawerListener(mDrawerToggle); 
-     // enable ActionBar app icon to behave as action to toggle nav drawer
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-        getActionBar().setHomeButtonEnabled(true);
+		mDrawerList = (ListView) findViewById(R.id.left_drawer);
 
-        
-       
+		// set up the drawer's list view with items and click listener
+		mDrawerList.setAdapter(new ArrayAdapter<String>(this,
+				R.layout.drawer_list_item, mMapTypes));
+		mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
 
-        if (savedInstanceState == null) {
-            selectItem(0);
-        }
+		mDrawerToggle = new ActionBarDrawerToggle(
+				this,                  /* host Activity */
+				mDrawerLayout,         /* DrawerLayout object */
+				R.drawable.common_signin_btn_icon_normal_light,  /* nav drawer image to replace 'Up' caret */
+				R.string.drawer_open,  /* "open drawer" description for accessibility */
+				R.string.drawer_close  /* "close drawer" description for accessibility */
+				);
+
+		mDrawerLayout.setDrawerListener(mDrawerToggle); 
+		// enable ActionBar app icon to behave as action to toggle nav drawer
+		getActionBar().setDisplayHomeAsUpEnabled(true);
+		getActionBar().setHomeButtonEnabled(true);
+
+
+
+
+		if (savedInstanceState == null) {
+			selectItem(0);
+		}
 
 	}
 
@@ -131,15 +131,17 @@ public class GoogleMapWifil extends Activity {
 					if (extras != null) {
 						final String ssid = extras.getString("SSID");
 						final String bssid = extras.getString("BSSID");  
-						
+						final boolean isPublicBool = extras.getBoolean("ISPUBLIC");  
+						final int isPublic = isPublicBool?1:0;
+
 						// Post the selected hotspot to the server
 						new Thread(new Runnable() {
-					        public void run() {
-					        	Hotspot hs = new Hotspot(ssid, bssid, myCoords.latitude, myCoords.longitude, 0, 0);
-					        	ServerCommunication.submitData("1234", "5678", ServerCommunication.toJSON(hs));
-					        }
+							public void run() {
+								Hotspot hs = new Hotspot(ssid, bssid, myCoords.latitude, myCoords.longitude, 0, isPublic);
+								ServerCommunication.submitData("1234", "5678", ServerCommunication.toJSON(hs));
+							}
 						}).start();
-						
+
 						Toast.makeText(getBaseContext(), "Wi-Fi hotspot: "+ssid+" has been pinned.", Toast.LENGTH_LONG).show();
 					}
 				}
@@ -151,11 +153,11 @@ public class GoogleMapWifil extends Activity {
 			public void onCameraChange(CameraPosition position) {
 				final LatLng cameraCoords = position.target;
 				//float zoomLevel = position.zoom;
-				
+
 				// Get the hotspots on a different thread so the UI doesn't slow down
 				new Thread(new Runnable() {
-			        public void run() {					
-			        	
+					public void run() {					
+
 						final Hotspot[] hotspots = ServerCommunication.getHotspots("1234", "5678", cameraCoords.latitude+"", cameraCoords.longitude+"", "5");
 						if (hotspots != null) {
 							Handler handler = new Handler(Looper.getMainLooper());
@@ -163,9 +165,9 @@ public class GoogleMapWifil extends Activity {
 								@Override
 								public void run() {
 									for (Hotspot hs : hotspots) {
-						        		// Don't pin markers more than once
-						            	if(!markerHashMap.containsKey(hs.getMac())) {
-						            		markerHashMap.put(hs.getMac(), 1);
+										// Don't pin markers more than once
+										if(!markerHashMap.containsKey(hs.getMac())) {
+											markerHashMap.put(hs.getMac(), 1);
 											LatLng latlng = new LatLng(hs.getLat(), hs.getLon());
 											mMap.addCircle(new CircleOptions().center(latlng).radius(hs.getRadius()).strokeColor(Color.BLUE).strokeWidth(2).fillColor(Color.TRANSPARENT));
 											// Add a green marker if hotspot is public, or red otherwise
@@ -174,14 +176,14 @@ public class GoogleMapWifil extends Activity {
 											else {
 												mMap.addMarker(new MarkerOptions().position(latlng).draggable(false).title(hs.getSSID()).snippet("["+hs.getMac()+"]"));
 											}
-						            	}
+										}
 									}
 								} 
 							});
-							
+
 						}
-			        }
-			    }).start();
+					}
+				}).start();
 			}
 		});
 
@@ -195,16 +197,16 @@ public class GoogleMapWifil extends Activity {
 		 */
 
 	}
-	
+
 	private class DrawerItemClickListener implements ListView.OnItemClickListener {
-        @Override
-      public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            selectItem(position);
-        }
-    }
-	
+		@Override
+		public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+			selectItem(position);
+		}
+	}
+
 	private void selectItem(int position) {
-        // update the main content by replacing fragments
+		// update the main content by replacing fragments
 		if(position == 0)
 			mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 		else if(position==1)
@@ -213,11 +215,11 @@ public class GoogleMapWifil extends Activity {
 			mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
 		else if(position == 3)
 			mMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
-		
-        // update selected item and title, then close the drawer
-        mDrawerList.setItemChecked(position, true);
-        mDrawerLayout.closeDrawer(mDrawerList);
-    }
+
+		// update selected item and title, then close the drawer
+		mDrawerList.setItemChecked(position, true);
+		mDrawerLayout.closeDrawer(mDrawerList);
+	}
 
 
 
