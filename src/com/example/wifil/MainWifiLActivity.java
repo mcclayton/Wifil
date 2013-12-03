@@ -95,6 +95,7 @@ public class MainWifilActivity extends Activity {
 	            	Intent mapIntent = new Intent(getBaseContext(), GoogleMapWifil.class);
 	            	mapIntent.putExtra("SSID", selectedHotspot.SSID);
 	            	mapIntent.putExtra("BSSID", selectedHotspot.BSSID);
+	            	mapIntent.putExtra("ISPUBLIC", hotspotIsPublic(selectedHotspot));
 	            	startActivity(mapIntent);
 		            break;
 		        }

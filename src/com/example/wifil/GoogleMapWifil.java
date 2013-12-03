@@ -60,8 +60,7 @@ public class GoogleMapWifil extends Activity {
 		mDrawerList = (ListView) findViewById(R.id.left_drawer);
 
 		// set up the drawer's list view with items and click listener
-		mDrawerList.setAdapter(new ArrayAdapter<String>(this,
-				R.layout.drawer_list_item, mMapTypes));
+		mDrawerList.setAdapter(new ArrayAdapter<String>(this, R.layout.drawer_list_item, mMapTypes));
 		mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
 
 		mDrawerToggle = new ActionBarDrawerToggle(
@@ -76,9 +75,6 @@ public class GoogleMapWifil extends Activity {
 		// enable ActionBar app icon to behave as action to toggle nav drawer
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 		getActionBar().setHomeButtonEnabled(true);
-
-
-
 
 		if (savedInstanceState == null) {
 			selectItem(0);
