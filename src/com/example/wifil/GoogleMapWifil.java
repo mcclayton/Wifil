@@ -1,5 +1,6 @@
 package com.example.wifil;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.json.JSONArray;
@@ -52,6 +53,7 @@ public class GoogleMapWifil extends Activity {
 	private String[] mMapTypes;
 	private boolean circlesVisible = false;
 	private boolean heatMapping = false;
+	private ArrayList<Circle> heatMapCircles = new ArrayList<Circle>();
 
 
 	@Override
@@ -255,6 +257,10 @@ public class GoogleMapWifil extends Activity {
 				}
 				circlesVisible = false;
 			} else {
+				for (Circle c : heatMapCircles) {
+					c.remove();
+				}
+				heatMapCircles.clear();
 				for (Circle c : markerHashMap.values()) {
 					c.setStrokeWidth(2);
 					c.setFillColor(Color.TRANSPARENT);
@@ -271,12 +277,19 @@ public class GoogleMapWifil extends Activity {
 				for (Circle c : markerHashMap.values()) {
 					c.setVisible(false);
 				}
+				for (Circle c : heatMapCircles) {
+					c.remove();
+				}
+				heatMapCircles.clear();
 				heatMapping = false;
 			} else {
+				Circle heatC;
 				for (Circle c : markerHashMap.values()) {
 					c.setStrokeWidth(0);
 					c.setFillColor(Color.argb(25, 255, 0, 0));
 					c.setVisible(true);
+					heatC = mMap.addCircle(new CircleOptions().center(c.getCenter()).radius(c.getRadius()+15).strokeWidth(0).fillColor(Color.argb(15, 255, 200, 0)));
+					heatMapCircles.add(heatC);
 				}
 				heatMapping = true;
 				circlesVisible = false;
