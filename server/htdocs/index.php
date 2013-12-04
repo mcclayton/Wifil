@@ -14,17 +14,17 @@
 			<img id="logo" src="img/logo_trans.png" alt="Wifil Logo">
 			</div>
 			<div id="content">
-				<h1>HEADING</h1>
+				<?php /* <h1>HEADING</h1>
 				<div id="description">
 					<p>Description goes here</p>
 					<p>More description</p>
 					<p>Etc.</p>
-				</div>
+				</div> */ ?>
 				<div id="map-canvas"></div>
 			</div>
 		</div>
 		<div id="footer">
-			Wifil is super great, blah blah blah
+			Wifil was developed by Michael Clayton, William King, Bakytzhan Kudebayev, and Brandananan Miller.
 		</div>
 	</body>
 </html>
